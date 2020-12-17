@@ -104,7 +104,7 @@ sh ./build/envsetup.sh
 # check rom type and assign gapps type and rom type
 if [$FOSTERTYPE == "t"];
 then
-	TYPE = "tvstock"
+	TYPE = "tvmini"
 	OUTPUTFILE = "foster"
 	lunch lineage_foster-userdebug
 else
