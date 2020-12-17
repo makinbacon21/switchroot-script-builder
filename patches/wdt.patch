@@ -1,0 +1,18 @@
+diff --git a/kernel-dts/tegra210-icosa-common.dtsi b/kernel-dts/tegra210-icosa-common.dtsi
+index 7178913..5e9fce2 100644
+--- a/kernel-dts/tegra210-icosa-common.dtsi
++++ b/kernel-dts/tegra210-icosa-common.dtsi
+@@ -446,6 +446,13 @@
+ 
+ 	};
+ 
++	tegra_wdt: watchdog@60005100 {
++		dt-override-status-odm-data = <0x00010000 0x00010000>;
++		timeout-sec = <120>;
++		status = "okay";
++	};
++
++
+ 	joyconr_charger: joyconr_charger {
+ 		status = "okay";
+ 		compatible = "regulator-fixed";

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# get current working directory
+CWD = $(pwd)
+
 # get threads for tasks
 JOBS=$(($(nproc) + 1))
 
@@ -9,8 +12,23 @@ sudo apt install bc bison build-essential ccache curl flex g++-multilib gcc-mult
 > libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc 
 > zip zlib1g-dev
 
+# chill in home
+cd ~/
+
 # rom type?
 read -p "Do ya want android (t) or android tv (f)? " FOSTERTYPE
+
+# oc coreboot?
+read -p "Do ya want an 1862 MHz memory OC (y/n)? " MEMOC
+
+# oc patch?
+read -p "Do ya want a CPU OC (y/n)? " CPUOC
+
+# joycon-swap?
+read -p "Do ya want the joycon trigger patch (y/n)? " JCPATCH
+
+# wdc?
+read -p "Do ya want to test with wdc patch (y/n)? " WDCPATCH
 
 # check to see if git is configured, if not prompt user
 if ["$(git config --list)" != *"user.email"*] 
@@ -76,20 +94,36 @@ repopick -t icosa-bt-lineage-17.1
 repopick 287339
 repopick 284553
 
-# patch bionic_intrinsics, nvcpl, oc, joycond, and foster
-cd bionic
-patch -p1 < ../.repo/local_manifests/patches/bionic_intrinsics.patch
-cd ../frameworks/base
-patch -p1 < ../../.repo/local_manifests/patches/frameworks_base_nvcpl.patch
-cd ../../kernel/nvidia/linux-4.9/kernel/kernel-4.9
-patch -p1 < ../../../../../.repo/local_manifests/patches/oc-android10.patch
-cd ~/android/lineage/hardware/nintendo/joycond
-patch -p1 < ../../../.repo/local_manifests/patches/joycond10.patch
-wget -O .repo/android_device_nvidia_foster.patch https://gitlab.com/ZachyCatGames/q-tips-guide/-/raw/master/res/android_device_nvidia_foster.patch
-cd ~/android/lineage/device/nvidia/foster
-rm patch -p1 < ../../../.repo/android_device_nvidia_foster.patch
-patch -p1 < ../../../.repo/android_device_nvidia_foster.patch
-cd ../../../
+# patches
+cd ~/android/lineage/bionic
+patch -p1 < ~/android/lineage/.repo/local_manifests/patches/bionic_intrinsics.patch
+
+# nvcpl patch
+cd ~/android/lineage/frameworks/base
+patch -p1 < ~/android/lineage/.repo/local_manifests/patches/frameworks_base_nvcpl.patch
+
+# cpu oc patch
+if [$CPUOC == "y"];
+then
+	cd ../../kernel/nvidia/linux-4.9/kernel/kernel-4.9
+	patch -p1 < $CWD/patches/oc-android10.patch
+fi
+
+# joycon patch
+if [$JCPATCH == "y"];
+then
+	cd ~/android/lineage/hardware/nintendo/joycond
+	patch -p1 < $CWD/patches/joycond10.patch
+fi
+
+# wdc patch
+if [$WDCPATCH == "y"];
+then
+	cd /hardware/nvidia/platform/t210/icosa
+	patch -p1 < $CWD/patches/wdc.patch
+
+# reset back to lineage directory
+cd ~/android/lineage
 
 # ccache
 export USE_CCACHE=1
@@ -141,7 +175,15 @@ cp ~/android/lineage/out/target/product/$OUTPUTFILE/obj/KERNEL_OBJ/arch/arm64/bo
 echo "Downloading twrp..."
 curl -L -o ~/android/output/switchroot/install/twrp.img https://github.com/PabloZaiden/switchroot-android-build/raw/master/external/twrp.img
 echo "Downloading coreboot.rom..."
-curl -L -o ~/android/output/switchroot/android/coreboot.rom https://github.com/PabloZaiden/switchroot-android-build/raw/master/external/coreboot.rom
+
+# oc coreboot check
+if [$MEMOC == "y"];
+then
+	curl -L -o ~/android/output/switchroot/android/coreboot.rom https://cdn.discordapp.com/attachments/667093920005619742/772516469078622239/coreboot-oc.rom
+else
+	curl -L -o ~/android/output/switchroot/android/coreboot.rom https://github.com/PabloZaiden/switchroot-android-build/raw/master/external/coreboot.rom
+fi
+
 echo "Downloading 00-android.ini..."
 curl -L -o ~/android/output/bootloader/ini/00-android.ini https://gitlab.com/ZachyCatGames/shitty-pie-guide/-/raw/master/res/00-android.ini?inline=false
 echo "Downloading boot scripts..."
