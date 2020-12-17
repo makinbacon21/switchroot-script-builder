@@ -16,19 +16,54 @@ sudo apt install bc bison build-essential ccache curl flex g++-multilib gcc-mult
 cd ~/
 
 # rom type?
-read -p "Do ya want android (t) or android tv (f)? " FOSTERTYPE
+while true; do
+    read -p "Do ya want android (t) or android tv (f)?" tf
+    case $tf in
+        [Tt]* ) FOSTERTYPE = t;;
+        [Ff]* ) FOSTERTYPE = f;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
 
 # oc coreboot?
-read -p "Do ya want an 1862 MHz memory OC (y/n)? " MEMOC
+while true; do
+    read -p "Do ya want an 1862 MHz memory OC (y/n)?" yn
+    case $yn in
+        [Yy]* ) MEMOC = y;;
+        [Nn]* ) MEMOC = n;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
 
 # oc patch?
-read -p "Do ya want a 2091 MHz CPU OC (y/n)? " CPUOC
+while true; do
+    read -p "Do ya want a 2091 MHz CPU OC (y/n)?" yn
+    case $yn in
+        [Yy]* ) CPUOC = y;;
+        [Nn]* ) CPUOC = n;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
 
 # joycon-swap?
-read -p "Do ya want the joycon trigger patch (y/n)? " JCPATCH
+while true; do
+    read -p "Do ya want the joycon trigger patch (y/n)?" yn
+    case $yn in
+        [Yy]* ) JCPATCH = y;;
+        [Nn]* ) JCPATCH = n;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
 
 # wdc?
-read -p "Do ya want to test with wdc patch (y/n)? " WDCPATCH
+while true; do
+    read -p "Do ya want to test with wdc patch (y/n)?" yn
+    case $yn in
+        [Yy]* ) WDCPATCH = y;;
+        [Nn]* ) WDCPATCH = n;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
 
 # check to see if git is configured, if not prompt user
 if ["$(git config --list)" != *"user.email"*] 
