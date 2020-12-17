@@ -8,4 +8,4 @@ It's pretty straightforward--run the script with `sh Foster_Tab_Q_Build_Script.s
 # Credits
 @Dajokeisonu for his wonderful work on the base script
 
-@PabloZaiden for his work on the Dockerized build
+@PabloZaiden for his work on the Dockerized build and the disgusting URL magic that has been performed to get GApps to work properly
