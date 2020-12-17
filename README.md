@@ -23,3 +23,5 @@ It's pretty straightforward--run the script with `sh Foster_Tab_Q_Build_Script.s
 @Dajokeisonu for his work on the base script
 
 @PabloZaiden for his work on the Dockerized build and the disgusting URL magic that has been performed to get GApps to work properly
+
+@ZachyCatGames for his work on the original Q building instructions (Q-Tips Guide)
