@@ -119,7 +119,7 @@ cd .repo/local_manifests
 git pull
 cd ../../
 repo sync --force-sync -j${JOBS}
-./build/envsetup.sh
+source ./build/envsetup.sh
 
 # repopicks
 repopick -t nvidia-enhancements-q
@@ -140,7 +140,7 @@ patch -p1 < ~/android/lineage/.repo/local_manifests/patches/frameworks_base_nvcp
 # cpu oc patch
 if [$CPUOC == "y"];
 then
-	cd ../../kernel/nvidia/linux-4.9/kernel/kernel-4.9
+	cd ~/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
 	patch -p1 < $CWD/patches/oc-android10.patch
 fi
 
@@ -151,11 +151,11 @@ then
 	patch -p1 < $CWD/patches/joycond10.patch
 fi
 
-# wdc patch
-if [$WDCPATCH == "y"];
+# wdt patch
+if [$WDTPATCH == "y"];
 then
-	cd /hardware/nvidia/platform/t210/icosa
-	patch -p1 < $CWD/patches/wdc.patch
+	cd ~/android/lineage/hardware/nvidia/platform/t210/icosa
+	patch -p1 < $CWD/patches/wdt.patch
 
 # reset back to lineage directory
 cd ~/android/lineage
