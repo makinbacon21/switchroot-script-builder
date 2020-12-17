@@ -22,7 +22,7 @@ read -p "Do ya want android (t) or android tv (f)? " FOSTERTYPE
 read -p "Do ya want an 1862 MHz memory OC (y/n)? " MEMOC
 
 # oc patch?
-read -p "Do ya want a CPU OC (y/n)? " CPUOC
+read -p "Do ya want a 2091 MHz CPU OC (y/n)? " CPUOC
 
 # joycon-swap?
 read -p "Do ya want the joycon trigger patch (y/n)? " JCPATCH
