@@ -14,6 +14,8 @@ Joycon patch (analog trigger emulation for xCloud, Steam Link, etc.)
 
 `wdc` patch (TESTING PURPOSES ONLY)
 
+GApps download
+
 # Building
 It's pretty straightforward--run the script with `sh Foster_Tab_Q_Build_Script.sh` and answer any prompts you get. Once stuff starts happening, there shouldn't be any more prompts unless you screwed something up
 
