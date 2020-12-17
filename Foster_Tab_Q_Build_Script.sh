@@ -19,8 +19,8 @@ cd ~/
 while true; do
     read -p "Do ya want android (t) or android tv (f)?" tf
     case $tf in
-        [Tt]* ) FOSTERTYPE = t;;
-        [Ff]* ) FOSTERTYPE = f;;
+        [Tt]* ) FOSTERTYPE = t; break;;
+        [Ff]* ) FOSTERTYPE = f; break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
@@ -29,8 +29,8 @@ done
 while true; do
     read -p "Do ya want an 1862 MHz memory OC (y/n)?" yn
     case $yn in
-        [Yy]* ) MEMOC = y;;
-        [Nn]* ) MEMOC = n;;
+        [Yy]* ) MEMOC = y; break;;
+        [Nn]* ) MEMOC = n; break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
@@ -39,8 +39,8 @@ done
 while true; do
     read -p "Do ya want a 2091 MHz CPU OC (y/n)?" yn
     case $yn in
-        [Yy]* ) CPUOC = y;;
-        [Nn]* ) CPUOC = n;;
+        [Yy]* ) CPUOC = y; break;;
+        [Nn]* ) CPUOC = n; break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
@@ -49,8 +49,8 @@ done
 while true; do
     read -p "Do ya want the joycon trigger patch (y/n)?" yn
     case $yn in
-        [Yy]* ) JCPATCH = y;;
-        [Nn]* ) JCPATCH = n;;
+        [Yy]* ) JCPATCH = y; break;;
+        [Nn]* ) JCPATCH = n; break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
@@ -59,8 +59,8 @@ done
 while true; do
     read -p "Do ya want to test with wdc patch (y/n)?" yn
     case $yn in
-        [Yy]* ) WDCPATCH = y;;
-        [Nn]* ) WDCPATCH = n;;
+        [Yy]* ) WDCPATCH = y; break;;
+        [Nn]* ) WDCPATCH = n; break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
