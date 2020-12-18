@@ -109,17 +109,20 @@ then
 	repo init -u https://github.com/LineageOS/android.git -b lineage-17.1
 	repo sync --force-sync -j${JOBS}
 	git clone https://gitlab.com/switchroot/android/manifest.git -b lineage-17.1 .repo/local_manifests
+	repo sync
+else
+	cd ~/android/lineage
+	repo forall -c 'git reset --hard'
+	repo forall -c 'git clean -fdd'
+	cd .repo/local_manifests
+	git pull
+	cd ~/android/lineage
+	repo sync --force-sync -j${JOBS}
 fi
 
 # update stuff (used for clean too but kinda unnecessary)
-cd ~/android/lineage
-repo forall -c 'git reset --hard'
-repo forall -c 'git clean -fdd'
-cd .repo/local_manifests
-git pull
-cd ../../
-repo sync --force-sync -j${JOBS}
-source ./build/envsetup.sh
+
+source build/envsetup.sh
 
 # repopicks
 repopick -t nvidia-enhancements-q
