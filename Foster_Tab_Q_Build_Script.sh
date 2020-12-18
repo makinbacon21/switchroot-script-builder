@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/bin/sh
 
 # get current working directory
-CWD = $(pwd)
+CWD=$(pwd)
 
 # get threads for tasks
 JOBS=$(($(nproc) + 1))
@@ -17,10 +17,10 @@ cd ~/
 
 # rom type?
 while true; do
-    read -p "Do ya want android (t) or android tv (f)?" tf
+    read -p "Do ya want android mobile (t) or android tv (f)?" tf
     case $tf in
-        [Tt]* ) FOSTERTYPE = t; break;;
-        [Ff]* ) FOSTERTYPE = f; break;;
+        [Tt]* ) FOSTERTYPE=t; break;;
+        [Ff]* ) FOSTERTYPE=f; break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
@@ -29,8 +29,8 @@ done
 while true; do
     read -p "Do ya want an 1862 MHz memory OC (y/n)?" yn
     case $yn in
-        [Yy]* ) MEMOC = y; break;;
-        [Nn]* ) MEMOC = n; break;;
+        [Yy]* ) MEMOC=y; break;;
+        [Nn]* ) MEMOC=n; break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
@@ -39,8 +39,8 @@ done
 while true; do
     read -p "Do ya want a 2091 MHz CPU OC (y/n)?" yn
     case $yn in
-        [Yy]* ) CPUOC = y; break;;
-        [Nn]* ) CPUOC = n; break;;
+        [Yy]* ) export CPUOC=y; break;;
+        [Nn]* ) export CPUOC=n; break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
@@ -49,8 +49,8 @@ done
 while true; do
     read -p "Do ya want the joycon trigger patch (y/n)?" yn
     case $yn in
-        [Yy]* ) JCPATCH = y; break;;
-        [Nn]* ) JCPATCH = n; break;;
+        [Yy]* ) export JCPATCH=y; break;;
+        [Nn]* ) export JCPATCH=n; break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
@@ -59,8 +59,8 @@ done
 while true; do
     read -p "Do ya want to test with wdc patch (y/n)?" yn
     case $yn in
-        [Yy]* ) WDCPATCH = y; break;;
-        [Nn]* ) WDCPATCH = n; break;;
+        [Yy]* ) export WDCPATCH=y; break;;
+        [Nn]* ) export WDCPATCH=n; break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
