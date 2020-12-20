@@ -163,7 +163,6 @@ then
 
 # reset back to lineage directory
 cd $BUILDBASE/android/lineage
-source build/envsetup.sh
 
 # ccache
 export USE_CCACHE=1
@@ -173,7 +172,7 @@ ccache -M 50G
 
 ### Rebuild (clean)
 mkdir -p ./out/target/product/$OUTPUTFILE/vendor/lib/modules
-sh ./build/envsetup.sh
+source /build/envsetup.sh
 
 # check rom type and assign gapps type and rom type
 if [$FOSTERTYPE == "t"];
