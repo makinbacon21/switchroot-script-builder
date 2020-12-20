@@ -142,24 +142,25 @@ cd $BUILDBASE/android/lineage/frameworks/base
 patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/frameworks_base_nvcpl.patch
 
 # cpu oc patch
-if [$CPUOC == "y"];
+if [$CPUOC=="y"];
 then
 	cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
 	patch -p1 < $CWD/patches/oc-android10.patch
 fi
 
 # joycon patch
-if [$JCPATCH == "y"];
+if [$JCPATCH=="y"];
 then
 	cd $BUILDBASE/android/lineage/hardware/nintendo/joycond
 	patch -p1 < $CWD/patches/joycond10.patch
 fi
 
 # wdt patch
-if [$WDTPATCH == "y"];
+if [$WDTPATCH=="y"];
 then
 	cd $BUILDBASE/android/lineage/hardware/nvidia/platform/t210/icosa
 	patch -p1 < $CWD/patches/wdt.patch
+fi
 
 # reset back to lineage directory
 cd $BUILDBASE/android/lineage
