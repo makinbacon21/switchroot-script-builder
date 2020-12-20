@@ -4,7 +4,7 @@
 CWD=$(pwd)
 BUILDBASE=~
 
-cd BUILDBASE
+cd ~/
 
 # get threads for tasks
 JOBS=$(($(nproc) + 1))
@@ -66,7 +66,7 @@ while true; do
 done
 
 # check to see if git is configured, if not prompt user
-if ["$(git config --list)" != *"user.email"*] 
+if ["$(git config --list)"!=*"user.email"*] 
 then
 	read -p "Enter your git email address: " GITEMAIL
 	read -p "Enter your name: " GITNAME
@@ -97,7 +97,7 @@ then
 	chmod a+x $BUILDBASE/bin/repo
 	
 	# check for bin in PATH, add if missing
-	if ! grep -q "PATH=\"$HOME/bin:$PATH\"" "~/.profile" ; 
+	if [ ! grep -q "PATH=\"$HOME/bin:$PATH\"" "~/.profile" ]; 
     then
 		echo "if [ -d \"$HOME/bin\" ] ; then" >> ~/.profile
 		echo "    PATH=\"$HOME/bin:$PATH\"" >> ~/.profile
@@ -176,7 +176,7 @@ mkdir -p ./out/target/product/$OUTPUTFILE/vendor/lib/modules
 source /build/envsetup.sh
 
 # check rom type and assign gapps type and rom type
-if [$FOSTERTYPE == "t"];
+if [$FOSTERTYPE=="t"];
 then
 	TYPE = "tvmini"
 	OUTPUTFILE = "foster"
@@ -217,7 +217,7 @@ curl -L -o $BUILDBASE/android/output/switchroot/install/twrp.img https://github.
 echo "Downloading coreboot.rom..."
 
 # oc coreboot check
-if [$MEMOC == "y"];
+if [$MEMOC=="y"];
 then
 	curl -L -o $BUILDBASE/android/output/switchroot/android/coreboot.rom https://cdn.discordapp.com/attachments/667093920005619742/772516469078622239/coreboot-oc.rom
 else
