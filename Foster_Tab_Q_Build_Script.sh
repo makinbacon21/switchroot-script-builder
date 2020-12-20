@@ -2,9 +2,9 @@
 
 # get current working directory
 CWD=$(pwd)
-BUILDBASE="~/"
+BUILDBASE=~/
 
-cd ~/
+cd BUILDBASE
 
 # get threads for tasks
 JOBS=$(($(nproc) + 1))
