@@ -108,8 +108,9 @@ then
 	cd $BUILDBASE/android/lineage
 	repo init -u https://github.com/LineageOS/android.git -b lineage-17.1
 	repo sync --force-sync -j${JOBS}
-	git clone https://gitlab.com/switchroot/android/manifest.git -b lineage-17.1 .repo/local_manifests
-	repo sync
+	cd ./.repo
+	git clone https://gitlab.com/switchroot/android/manifest.git -b lineage-17.1 local_manifests
+	repo sync --force-sync -j${JOBS}
 else
 	cd $BUILDBASE/android/lineage
 	repo forall -c 'git reset --hard'
@@ -122,15 +123,15 @@ fi
 
 # update stuff (used for clean too but kinda unnecessary)
 cd $BUILDBASE/android/lineage
-bash source build/envsetup.sh
+source build/envsetup.sh
 
 # repopicks
-bash repopick -t nvidia-enhancements-q
-bash repopick -t nvidia-nvgpu-q
-bash repopick -t nvidia-shieldtech-q
-bash repopick -t icosa-bt-lineage-17.1
-bash repopick 287339
-bash repopick 284553
+${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-enhancements-q
+${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-nvgpu-q
+${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-shieldtech-q
+${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t icosa-bt-lineage-17.1
+${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 287339
+${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 284553
 
 # patches
 cd $BUILDBASE/android/lineage/bionic
@@ -162,6 +163,7 @@ then
 
 # reset back to lineage directory
 cd $BUILDBASE/android/lineage
+source build/envsetup.sh
 
 # ccache
 export USE_CCACHE=1
