@@ -122,15 +122,15 @@ fi
 
 # update stuff (used for clean too but kinda unnecessary)
 cd $BUILDBASE/android/lineage
-source build/envsetup.sh
+bash source build/envsetup.sh
 
 # repopicks
-repopick -t nvidia-enhancements-q
-repopick -t nvidia-nvgpu-q
-repopick -t nvidia-shieldtech-q
-repopick -t icosa-bt-lineage-17.1
-repopick 287339
-repopick 284553
+bash repopick -t nvidia-enhancements-q
+bash repopick -t nvidia-nvgpu-q
+bash repopick -t nvidia-shieldtech-q
+bash repopick -t icosa-bt-lineage-17.1
+bash repopick 287339
+bash repopick 284553
 
 # patches
 cd $BUILDBASE/android/lineage/bionic
