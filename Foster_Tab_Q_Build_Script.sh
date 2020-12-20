@@ -2,6 +2,9 @@
 
 # get current working directory
 CWD=$(pwd)
+BUILDBASE="~/"
+
+cd ~/
 
 # get threads for tasks
 JOBS=$(($(nproc) + 1))
@@ -11,9 +14,6 @@ sudo apt install bc bison build-essential ccache curl flex g++-multilib gcc-mult
 > imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5 libncurses5-dev 
 > libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc 
 > zip zlib1g-dev
-
-# chill in home
-cd ~/
 
 # rom type?
 while true; do
@@ -39,8 +39,8 @@ done
 while true; do
     read -p "Do ya want a 2091 MHz CPU OC (y/n)?" yn
     case $yn in
-        [Yy]* ) export CPUOC=y; break;;
-        [Nn]* ) export CPUOC=n; break;;
+        [Yy]* ) CPUOC=y; break;;
+        [Nn]* ) CPUOC=n; break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
@@ -49,18 +49,18 @@ done
 while true; do
     read -p "Do ya want the joycon trigger patch (y/n)?" yn
     case $yn in
-        [Yy]* ) export JCPATCH=y; break;;
-        [Nn]* ) export JCPATCH=n; break;;
+        [Yy]* ) JCPATCH=y; break;;
+        [Nn]* ) JCPATCH=n; break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
 
 # wdc?
 while true; do
-    read -p "Do ya want to test with wdc patch (y/n)?" yn
+    read -p "Do ya want to test with wdt patch (y/n)?" yn
     case $yn in
-        [Yy]* ) export WDCPATCH=y; break;;
-        [Nn]* ) export WDCPATCH=n; break;;
+        [Yy]* ) WDTPATCH=y; break;;
+        [Nn]* ) WDTPATCH=n; break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
@@ -75,12 +75,12 @@ then
 fi
 
 # clean build?
-if [ ! -d ./android ]; 
+if [ ! -d $BUILDBASE/android ]; 
 then
 	# download and unzip latest platform tools
 	wget https://dl.google.com/android/repository/platform-tools-latest-linux.zip
 	unzip platform-tools-latest-linux.zip -d ~
-	cd ../
+	cd $BUILDBASE
 
 	# check for platform tools in PATH, add if missing
 	if ! grep -q "PATH=\"$HOME/platform-tools:$PATH\"" "~/.profile" ; 
@@ -91,10 +91,10 @@ then
 	fi
 	
 	# create directories and get repo
-	mkdir -p ~/bin
-	mkdir -p ~/android/lineage
-	curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
-	chmod a+x ~/bin/repo
+	mkdir -p $BUILDBASE/bin
+	mkdir -p $BUILDBASE/android/lineage
+	curl https://storage.googleapis.com/git-repo-downloads/repo > $BUILDBASE/bin/repo
+	chmod a+x $BUILDBASE/bin/repo
 	
 	# check for bin in PATH, add if missing
 	if ! grep -q "PATH=\"$HOME/bin:$PATH\"" "~/.profile" ; 
@@ -105,23 +105,23 @@ then
 	fi
 
 	# initialize repo, sync
-	cd ~/android/lineage
+	cd $BUILDBASE/android/lineage
 	repo init -u https://github.com/LineageOS/android.git -b lineage-17.1
 	repo sync --force-sync -j${JOBS}
 	git clone https://gitlab.com/switchroot/android/manifest.git -b lineage-17.1 .repo/local_manifests
 	repo sync
 else
-	cd ~/android/lineage
+	cd $BUILDBASE/android/lineage
 	repo forall -c 'git reset --hard'
 	repo forall -c 'git clean -fdd'
 	cd .repo/local_manifests
 	git pull
-	cd ~/android/lineage
+	cd $BUILDBASE/android/lineage
 	repo sync --force-sync -j${JOBS}
 fi
 
 # update stuff (used for clean too but kinda unnecessary)
-
+cd $BUILDBASE/android/lineage
 source build/envsetup.sh
 
 # repopicks
@@ -133,35 +133,35 @@ repopick 287339
 repopick 284553
 
 # patches
-cd ~/android/lineage/bionic
-patch -p1 < ~/android/lineage/.repo/local_manifests/patches/bionic_intrinsics.patch
+cd $BUILDBASE/android/lineage/bionic
+patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/bionic_intrinsics.patch
 
 # nvcpl patch
-cd ~/android/lineage/frameworks/base
-patch -p1 < ~/android/lineage/.repo/local_manifests/patches/frameworks_base_nvcpl.patch
+cd $BUILDBASE/android/lineage/frameworks/base
+patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/frameworks_base_nvcpl.patch
 
 # cpu oc patch
 if [$CPUOC == "y"];
 then
-	cd ~/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
+	cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
 	patch -p1 < $CWD/patches/oc-android10.patch
 fi
 
 # joycon patch
 if [$JCPATCH == "y"];
 then
-	cd ~/android/lineage/hardware/nintendo/joycond
+	cd $BUILDBASE/android/lineage/hardware/nintendo/joycond
 	patch -p1 < $CWD/patches/joycond10.patch
 fi
 
 # wdt patch
 if [$WDTPATCH == "y"];
 then
-	cd ~/android/lineage/hardware/nvidia/platform/t210/icosa
+	cd $BUILDBASE/android/lineage/hardware/nvidia/platform/t210/icosa
 	patch -p1 < $CWD/patches/wdt.patch
 
 # reset back to lineage directory
-cd ~/android/lineage
+cd $BUILDBASE/android/lineage
 
 # ccache
 export USE_CCACHE=1
@@ -191,42 +191,42 @@ make -j${JOBS} bacon
 
 cd ${BUILDBASE}
 
-ZIP_FILE=$(ls -rt ~/android/lineage/out/target/product/$OUTPUTFILE/lineage-17.1-*-UNOFFICIAL-$OUTPUTFILE.zip | tail -1)
+ZIP_FILE=$(ls -rt ${BUILDBASE}/android/lineage/out/target/product/$OUTPUTFILE/lineage-17.1-*-UNOFFICIAL-$OUTPUTFILE.zip | tail -1)
 
 ## Copy to output
 echo "Creating switchroot install dir..."
-mkdir -p ./android/output/switchroot/install
+mkdir -p $BUILDBASE/android/output/switchroot/install
 echo "Creating switchroot android dir..."
-mkdir -p ./android/output/switchroot/android
+mkdir -p $BUILDBASE/android/output/switchroot/android
 echo "Downloading hekate..."
 LATEST_HEKATE=$(curl -sL https://github.com/CTCaer/hekate/releases/latest | grep -o '/CTCaer/hekate/releases/download/.*/hekate_ctcaer.*zip')
 curl -L -o ./hekate.zip https://github.com/$LATEST_HEKATE
-unzip -u ./hekate.zip -d ./android/output/
+unzip -u ./hekate.zip -d $BUILDBASE/android/output/
 echo "Creating bootloader config dir..."
-mkdir -p ./android/output/bootloader/ini
+mkdir -p $BUILDBASE/android/output/bootloader/ini
 echo "Copying build zip to SD Card..."
-cp $ZIP_FILE ~/android/output/
+cp $ZIP_FILE $BUILDBASE/android/output/
 echo "Copying build combined kernel and ramdisk..."
-cp ~/android/lineage/out/target/product/$OUTPUTFILE/boot.img ./android/output/switchroot/install/
+cp $BUILDBASE/android/lineage/out/target/product/$OUTPUTFILE/boot.img $BUILDBASE/android/output/switchroot/install/
 echo "Copying build dtb..."
-cp ~/android/lineage/out/target/product/$OUTPUTFILE/obj/KERNEL_OBJ/arch/arm64/boot/dts/tegra210-icosa.dtb ./android/output/switchroot/install/
+cp $BUILDBASE/android/lineage/out/target/product/$OUTPUTFILE/obj/KERNEL_OBJ/arch/arm64/boot/dts/tegra210-icosa.dtb $BUILDBASE/android/output/switchroot/install/
 echo "Downloading twrp..."
-curl -L -o ~/android/output/switchroot/install/twrp.img https://github.com/PabloZaiden/switchroot-android-build/raw/master/external/twrp.img
+curl -L -o $BUILDBASE/android/output/switchroot/install/twrp.img https://github.com/PabloZaiden/switchroot-android-build/raw/master/external/twrp.img
 echo "Downloading coreboot.rom..."
 
 # oc coreboot check
 if [$MEMOC == "y"];
 then
-	curl -L -o ~/android/output/switchroot/android/coreboot.rom https://cdn.discordapp.com/attachments/667093920005619742/772516469078622239/coreboot-oc.rom
+	curl -L -o $BUILDBASE/android/output/switchroot/android/coreboot.rom https://cdn.discordapp.com/attachments/667093920005619742/772516469078622239/coreboot-oc.rom
 else
-	curl -L -o ~/android/output/switchroot/android/coreboot.rom https://github.com/PabloZaiden/switchroot-android-build/raw/master/external/coreboot.rom
+	curl -L -o $BUILDBASE/android/output/switchroot/android/coreboot.rom https://github.com/PabloZaiden/switchroot-android-build/raw/master/external/coreboot.rom
 fi
 
 echo "Downloading 00-android.ini..."
-curl -L -o ~/android/output/bootloader/ini/00-android.ini https://gitlab.com/ZachyCatGames/shitty-pie-guide/-/raw/master/res/00-android.ini?inline=false
+curl -L -o $BUILDBASE/android/output/bootloader/ini/00-android.ini https://gitlab.com/ZachyCatGames/shitty-pie-guide/-/raw/master/res/00-android.ini?inline=false
 echo "Downloading boot scripts..."
-curl -L -o ~/android/output/switchroot/android/common.scr https://gitlab.com/switchroot/bootstack/switch-uboot-scripts/-/jobs/artifacts/master/raw/common.scr?job=build
-curl -L -o ~/android/output/switchroot/android/boot.scr https://gitlab.com/switchroot/bootstack/switch-uboot-scripts/-/jobs/artifacts/master/raw/sd.scr?job=build
+curl -L -o $BUILDBASE/android/output/switchroot/android/common.scr https://gitlab.com/switchroot/bootstack/switch-uboot-scripts/-/jobs/artifacts/master/raw/common.scr?job=build
+curl -L -o $BUILDBASE/android/output/switchroot/android/boot.scr https://gitlab.com/switchroot/bootstack/switch-uboot-scripts/-/jobs/artifacts/master/raw/sd.scr?job=build
 echo "Downloading Pico Open GApps..."
 
 # get base URL for pico gapps	
@@ -240,10 +240,10 @@ BASE_GAPPS_URL=$(curl -L https://sourceforge.net/projects/opengapps/rss?path=/ar
 
 TIMESTAMP=$(echo $(( $(date '+%s%N') / 1000000000)))
 FULL_GAPPS_URL=$(echo $BASE_GAPPS_URL"?use_mirror=autoselect&ts="$TIMESTAMP)
-curl -L -o ./android/output/opengapps_${TYPE}.zip $FULL_GAPPS_URL
+curl -L -o $BUILDBASE/android/output/opengapps_${TYPE}.zip $FULL_GAPPS_URL
 
 ## Patch zip file to accept any bootloader version
-OUTPUT_ZIP_FILE=$(ls -rt ~/android/output/lineage-17.1-*-UNOFFICIAL-${OUTPUTFILE}.zip | tail -1)
+OUTPUT_ZIP_FILE=$(ls -rt ${BUILDBASE}/android/output/lineage-17.1-*-UNOFFICIAL-${OUTPUTFILE}.zip | tail -1)
 
 mkdir -p ./META-INF/com/google/android/
 unzip -p $OUTPUT_ZIP_FILE META-INF/com/google/android/updater-script > ./META-INF/com/google/android/updater-script.original
