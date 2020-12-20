@@ -2,7 +2,7 @@
 
 # get current working directory
 CWD=$(pwd)
-BUILDBASE=~/
+BUILDBASE=~
 
 cd BUILDBASE
 
