@@ -66,7 +66,7 @@ while true; do
 done
 
 # check to see if git is configured, if not prompt user
-if ["$(git config --list)"!=*"user.email"*] 
+if [ "$(git config --list)" != *"user.email"* ] 
 then
 	read -p "Enter your git email address: " GITEMAIL
 	read -p "Enter your name: " GITNAME
@@ -142,21 +142,21 @@ cd $BUILDBASE/android/lineage/frameworks/base
 patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/frameworks_base_nvcpl.patch
 
 # cpu oc patch
-if [$CPUOC=="y"];
+if [ $CPUOC == "y" ];
 then
 	cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
 	patch -p1 < $CWD/patches/oc-android10.patch
 fi
 
 # joycon patch
-if [$JCPATCH=="y"];
+if [ $JCPATCH == "y" ];
 then
 	cd $BUILDBASE/android/lineage/hardware/nintendo/joycond
 	patch -p1 < $CWD/patches/joycond10.patch
 fi
 
 # wdt patch
-if [$WDTPATCH=="y"];
+if [ $WDTPATCH == "y" ];
 then
 	cd $BUILDBASE/android/lineage/hardware/nvidia/platform/t210/icosa
 	patch -p1 < $CWD/patches/wdt.patch
@@ -172,11 +172,11 @@ export WITHOUT_CHECK_API=true
 ccache -M 50G
 
 ### Rebuild (clean)
-mkdir -p ./out/target/product/$OUTPUTFILE/vendor/lib/modules
+mkdir -p $BUILDBASE/out/target/product/$OUTPUTFILE/vendor/lib/modules
 source /build/envsetup.sh
 
 # check rom type and assign gapps type and rom type
-if [$FOSTERTYPE=="t"];
+if [ $FOSTERTYPE == "t" ];
 then
 	TYPE = "tvmini"
 	OUTPUTFILE = "foster"
@@ -217,7 +217,7 @@ curl -L -o $BUILDBASE/android/output/switchroot/install/twrp.img https://github.
 echo "Downloading coreboot.rom..."
 
 # oc coreboot check
-if [$MEMOC=="y"];
+if [ $MEMOC == "y" ];
 then
 	curl -L -o $BUILDBASE/android/output/switchroot/android/coreboot.rom https://cdn.discordapp.com/attachments/667093920005619742/772516469078622239/coreboot-oc.rom
 else
