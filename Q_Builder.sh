@@ -178,7 +178,7 @@ mkdir -p $BUILDBASE/android/lineage/out/target/product/$OUTPUTFILE/vendor/lib/mo
 source build/envsetup.sh
 
 # check rom type and assign gapps type and rom type
-if [ $FOSTERTYPE = "t" ];
+if [ $FOSTERTYPE = "m" ];
 then
 	TYPE="tvmini"
 	OUTPUTFILE="foster"
