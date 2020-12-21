@@ -32,3 +32,7 @@ It's pretty straightforward--first `chmod +x Q_Builder.sh` to make it executable
 @PabloZaiden for his work on the Dockerized build and the disgusting URL magic that has been performed to get GApps to work properly
 
 @ZachyCatGames for his work on the original Q building instructions (Q-Tips Guide)
+
+@Andrebraga for assisting PabloZaiden getting everything working in the Dockerized build.
+
+@Biff for providing patches
