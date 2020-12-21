@@ -146,6 +146,8 @@ if [ $CPUOC = "y" ];
 then
 	cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
 	patch -p1 < $CWD/patches/oc-android10.patch
+	cd $BUILDBASE/android/lineage/device/nvidia/foster
+        patch -p1 < $CWD/patches/oc_profiles.patch
 fi
 
 # joycon patch
@@ -172,8 +174,8 @@ export WITHOUT_CHECK_API=true
 ccache -M 50G
 
 ### Rebuild (clean)
-mkdir -p $BUILDBASE/out/target/product/$OUTPUTFILE/vendor/lib/modules
-source /build/envsetup.sh
+mkdir -p $BUILDBASE/android/lineage/out/target/product/$OUTPUTFILE/vendor/lib/modules
+source build/envsetup.sh
 
 # check rom type and assign gapps type and rom type
 if [ $FOSTERTYPE = "t" ];
