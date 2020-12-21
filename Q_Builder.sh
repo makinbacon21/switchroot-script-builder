@@ -17,10 +17,10 @@ sudo apt install bc bison build-essential ccache curl flex g++-multilib gcc-mult
 
 # rom type?
 while true; do
-    read -p "Do ya want android mobile (t) or android tv (f)?" tf
-    case $tf in
-        [Tt]* ) FOSTERTYPE=t; break;;
-        [Ff]* ) FOSTERTYPE=f; break;;
+    read -p "Do ya want android mobile (m) or android tv (t)?" mt
+    case $mt in
+        [Mm]* ) FOSTERTYPE=t; break;;
+        [Tt]* ) FOSTERTYPE=f; break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
