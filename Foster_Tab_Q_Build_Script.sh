@@ -158,7 +158,7 @@ fi
 # wdt patch
 if [ $WDTPATCH = "y" ];
 then
-	cd $BUILDBASE/android/lineage/hardware/nvidia/platform/t210/icosa
+	cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/hardware/nvidia/platform/t210/icosa
 	patch -p1 < $CWD/patches/wdt.patch
 fi
 
@@ -178,12 +178,12 @@ source /build/envsetup.sh
 # check rom type and assign gapps type and rom type
 if [ $FOSTERTYPE = "t" ];
 then
-	TYPE="tvmini"
-	OUTPUTFILE="foster"
+	TYPE = "tvmini"
+	OUTPUTFILE = "foster"
 	lunch lineage_foster-userdebug
 else
-	TYPE="pico"
-	OUTPUTFILE="foster_tab"
+	TYPE = "pico"
+	OUTPUTFILE = "foster_tab"
 	lunch lineage_foster_tab-userdebug
 fi
 make -j${JOBS} bacon
@@ -253,4 +253,5 @@ sed -E 's/getprop\(\"ro\.bootloader\"\)/true || getprop\(\"ro\.bootloader\"\)/g'
 rm ./META-INF/com/google/android/updater-script.original
 zip -u $OUTPUT_ZIP_FILE META-INF/com/google/android/updater-script
 rm -rf ./META-INF/com/google/android/
+
 
