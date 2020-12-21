@@ -178,12 +178,12 @@ source /build/envsetup.sh
 # check rom type and assign gapps type and rom type
 if [ $FOSTERTYPE = "t" ];
 then
-	TYPE = "tvmini"
-	OUTPUTFILE = "foster"
+	TYPE="tvmini"
+	OUTPUTFILE="foster"
 	lunch lineage_foster-userdebug
 else
-	TYPE = "pico"
-	OUTPUTFILE = "foster_tab"
+	TYPE="pico"
+	OUTPUTFILE="foster_tab"
 	lunch lineage_foster_tab-userdebug
 fi
 make -j${JOBS} bacon
