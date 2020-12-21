@@ -35,4 +35,4 @@ It's pretty straightforward--first `chmod +x Q_Builder.sh` to make it executable
 
 @Andrebraga for assisting PabloZaiden getting everything working in the Dockerized build.
 
-@Biff for providing patches
+@Biff627 for providing patches
