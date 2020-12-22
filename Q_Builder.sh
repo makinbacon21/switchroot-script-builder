@@ -19,8 +19,8 @@ sudo apt install bc bison build-essential ccache curl flex g++-multilib gcc-mult
 while true; do
     read -p "Do ya want android mobile (m) or android tv (t)?" mt
     case $mt in
-        [Mm]* ) FOSTERTYPE=t; break;;
-        [Tt]* ) FOSTERTYPE=f; break;;
+        [Mm]* ) FOSTERTYPE=m; break;;
+        [Tt]* ) FOSTERTYPE=t; break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
@@ -178,7 +178,7 @@ mkdir -p $BUILDBASE/android/lineage/out/target/product/$OUTPUTFILE/vendor/lib/mo
 source build/envsetup.sh
 
 # check rom type and assign gapps type and rom type
-if [ $FOSTERTYPE = "m" ];
+if [ $FOSTERTYPE = "t" ];
 then
 	TYPE="tvmini"
 	OUTPUTFILE="foster"
