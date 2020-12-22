@@ -24,7 +24,7 @@ GApps download
 Decent CPU (better CPU --> faster build)
 
 # Building
-It's pretty straightforward--first `chmod +x Q_Builder.sh` to make it executable, and run the script with `sh Q_Builder.sh` and answer any prompts you get. Once stuff starts happening, there shouldn't be any more prompts unless you screwed something up
+It's pretty straightforward--first `chmod +x Q_Builder.sh` to make it executable, and run the script with `./Q_Builder.sh` and answer any prompts you get. Once stuff starts happening, there shouldn't be any more prompts unless you screwed something up
 
 # Credits
 @Dajokeisonu for his direct contributions
