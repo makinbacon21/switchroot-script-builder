@@ -147,13 +147,6 @@ then
 	patch -p1 < $CWD/patches/joycond10.patch
 fi
 
-# wdt patch
-if [ $WDTPATCH = "y" ];
-then
-	cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/hardware/nvidia/platform/t210/icosa
-	patch -p1 < $CWD/patches/wdt.patch
-fi
-
 # reset back to lineage directory
 cd $BUILDBASE/android/lineage
 
