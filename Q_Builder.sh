@@ -17,8 +17,9 @@ sudo apt install bc bison build-essential ccache curl flex g++-multilib gcc-mult
 
 # rom type?
 while true; do
-    read -p "Do ya want android mobile (m) or android tv (t)?" mt
-    case $mt in
+    read -p "Do ya want icosa (i) or foster_tab (m) or android tv (t)?" imt
+    case $imt in
+        [Ii]* ) FOSTERTYPE=i; break;;
         [Mm]* ) FOSTERTYPE=m; break;;
         [Tt]* ) FOSTERTYPE=t; break;;
         * ) echo "Please answer yes or no.";;
@@ -161,16 +162,20 @@ mkdir -p $BUILDBASE/android/lineage/out/target/product/$OUTPUTFILE/vendor/lib/mo
 source build/envsetup.sh
 
 # check rom type and assign gapps type and rom type
-if [ $FOSTERTYPE = "t" ];
+if [ $FOSTERTYPE = "i" ];
 then
-	TYPE="tvmini"
-	OUTPUTFILE="foster"
-	lunch lineage_foster-userdebug
+	TYPE="pico"
+	OUTPUTFILE="icosa"
+	lunch lineage_icosa-userdebug
 else
 	TYPE="pico"
 	OUTPUTFILE="foster_tab"
 	lunch lineage_foster_tab-userdebug
+	TYPE="tvmini"
+	OUTPUTFILE="foster"
+	lunch lineage_foster-userdebug	
 fi
+
 make -j${JOBS} bacon
 
 ## This script copies the build output to the output dir
