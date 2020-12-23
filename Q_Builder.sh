@@ -55,16 +55,6 @@ while true; do
     esac
 done
 
-# wdc?
-while true; do
-    read -p "Do ya want to test with wdt patch (y/n)?" yn
-    case $yn in
-        [Yy]* ) WDTPATCH=y; break;;
-        [Nn]* ) WDTPATCH=n; break;;
-        * ) echo "Please answer yes or no.";;
-    esac
-done
-
 # check to see if git is configured, if not prompt user
 if [ "$(git config --list)" != *"user.email"* ] 
 then
