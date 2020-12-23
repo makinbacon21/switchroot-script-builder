@@ -12,8 +12,6 @@ OC patch (CPU)
 
 Joycon patch (analog trigger emulation for xCloud, Steam Link, etc.)
 
-`wdt` patch (TESTING PURPOSES ONLY)
-
 GApps download
 
 # Requirements
