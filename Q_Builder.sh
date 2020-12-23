@@ -167,10 +167,11 @@ then
 	TYPE="pico"
 	OUTPUTFILE="icosa"
 	lunch lineage_icosa-userdebug
-else
+elif [ $FOSTERTYPE = "m" ]
 	TYPE="pico"
 	OUTPUTFILE="foster_tab"
 	lunch lineage_foster_tab-userdebug
+else
 	TYPE="tvmini"
 	OUTPUTFILE="foster"
 	lunch lineage_foster-userdebug	
