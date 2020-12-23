@@ -2,7 +2,7 @@
 One script to rule them all
 
 # Features
-Supports Android (`foster_tab`) and Android TV (`foster`)
+Supports Android (`icosa`) (`foster_tab`) and Android TV (`foster`)
 
 Clean build and updates
 
