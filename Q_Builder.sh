@@ -167,7 +167,8 @@ then
 	TYPE="pico"
 	OUTPUTFILE="icosa"
 	lunch lineage_icosa-userdebug
-elif [ $FOSTERTYPE = "m" ]
+elif [ $FOSTERTYPE = "m" ];
+then
 	TYPE="pico"
 	OUTPUTFILE="foster_tab"
 	lunch lineage_foster_tab-userdebug
