@@ -1,83 +1,10 @@
 diff --git a/android/Vendor_057e_Product_2008.kl b/android/Vendor_057e_Product_2008.kl
-index 0b96cab..11fb6cb 100644
+index 15c0cf0..28f5308 100644
 --- a/android/Vendor_057e_Product_2008.kl
 +++ b/android/Vendor_057e_Product_2008.kl
-@@ -1,15 +1,13 @@
+@@ -1,4 +1,4 @@
 -key 309   BACK
 +key 309   SYSRQ
  key 314   BUTTON_SELECT
  key 318   BUTTON_THUMBR
  key 317   BUTTON_THUMBL
--key 304   BUTTON_A
--key 305   BUTTON_B
-+key 305   BUTTON_A
-+key 304   BUTTON_B
- key 308   BUTTON_X
- key 307   BUTTON_Y
- key 310   BUTTON_L1
- key 311   BUTTON_R1
--key 312   BUTTON_L2
--key 313   BUTTON_R2
- key 315   BUTTON_START
- key 316   HOME
- key 544   DPAD_UP
-@@ -21,3 +19,5 @@ axis 0x00 X
- axis 0x01 Y
- axis 0x03 Z
- axis 0x04 RZ
-+axis 0x02 LTRIGGER
-+axis 0x05 RTRIGGER
-diff --git a/src/virt_ctlr_combined.cpp b/src/virt_ctlr_combined.cpp
-index b33da76..e168a1c 100644
---- a/src/virt_ctlr_combined.cpp
-+++ b/src/virt_ctlr_combined.cpp
-@@ -40,6 +40,17 @@ void virt_ctlr_combined::relay_events(std::shared_ptr<phys_ctlr> phys)
-                 ret = libevdev_next_event(evdev, LIBEVDEV_READ_FLAG_NORMAL, &ev);
-                 continue;
-             }
-+    	    
-+            /* Second remap the ZL and ZR buttons on each physical controller */
-+    	    if (phys == physl && ev.type == EV_KEY && ev.code == BTN_TL2) {
-+    	        libevdev_uinput_write_event(uidev, EV_ABS, ABS_Z, ev.value);
-+    		    ret = libevdev_next_event(evdev, LIBEVDEV_READ_FLAG_NORMAL, &ev);
-+    		    continue;
-+    	    } else if (phys == physr && ev.type == EV_KEY && ev.code == BTN_TR2) {
-+    		    libevdev_uinput_write_event(uidev, EV_ABS, ABS_RZ, ev.value);
-+    		    ret = libevdev_next_event(evdev, LIBEVDEV_READ_FLAG_NORMAL, &ev);
-+    		    continue;
-+    	    }
-             libevdev_uinput_write_event(uidev, ev.type, ev.code, ev.value);
-         }
-         ret = libevdev_next_event(evdev, LIBEVDEV_READ_FLAG_NORMAL, &ev);
-@@ -220,8 +231,6 @@ virt_ctlr_combined::virt_ctlr_combined(std::shared_ptr<phys_ctlr> physl, std::sh
-     libevdev_enable_event_code(virt_evdev, EV_KEY, BTN_DPAD_RIGHT, NULL);
-     libevdev_enable_event_code(virt_evdev, EV_KEY, BTN_TL, NULL);
-     libevdev_enable_event_code(virt_evdev, EV_KEY, BTN_TR, NULL);
--    libevdev_enable_event_code(virt_evdev, EV_KEY, BTN_TL2, NULL);
--    libevdev_enable_event_code(virt_evdev, EV_KEY, BTN_TR2, NULL);
- 
-     // Map the S triggers to these misc. buttons if not connected via serial.
-     if (!physl->is_serial_ctlr() && !physr->is_serial_ctlr()) {
-@@ -236,12 +245,22 @@ virt_ctlr_combined::virt_ctlr_combined(std::shared_ptr<phys_ctlr> physl, std::sh
-     absconfig.maximum = 32767;
-     absconfig.fuzz = 250;
-     absconfig.flat = 500;
-+
-+    struct input_absinfo absconfig_fake = { 0 };
-+    absconfig_fake.minimum = 0;
-+    absconfig_fake.maximum = 1;
-+    absconfig_fake.fuzz = 0;
-+    absconfig_fake.flat = 0;
-+
-     libevdev_enable_event_type(virt_evdev, EV_ABS);
-     libevdev_enable_event_code(virt_evdev, EV_ABS, ABS_X, &absconfig);
-     libevdev_enable_event_code(virt_evdev, EV_ABS, ABS_Y, &absconfig);
-     libevdev_enable_event_code(virt_evdev, EV_ABS, ABS_RX, &absconfig);
-     libevdev_enable_event_code(virt_evdev, EV_ABS, ABS_RY, &absconfig);
- 
-+    libevdev_enable_event_code(virt_evdev, EV_ABS, ABS_Z, &absconfig_fake);
-+    libevdev_enable_event_code(virt_evdev, EV_ABS, ABS_RZ, &absconfig_fake);
-+
-     libevdev_enable_event_type(virt_evdev, EV_FF);
-     libevdev_enable_event_code(virt_evdev, EV_FF, FF_RUMBLE, NULL);
-     libevdev_enable_event_code(virt_evdev, EV_FF, FF_PERIODIC, NULL);
