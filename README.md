@@ -10,7 +10,7 @@ OC coreboot (memory overclock)
 
 OC patch (CPU)
 
-Joycon patch (analog trigger emulation for xCloud, Steam Link, etc.)
+Joycon patch (snapshot button takes screenshots)
 
 GApps download
 
