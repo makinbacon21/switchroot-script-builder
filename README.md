@@ -14,6 +14,8 @@ Joycon patch (snapshot button takes screenshots)
 
 GApps download
 
+Option to root (coming soon)
+
 # Requirements
 16GB RAM (or smaller amounts with a sizeable swapfile)
 
