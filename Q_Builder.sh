@@ -256,13 +256,16 @@ rm ./META-INF/com/google/android/updater-script.original
 zip -u $OUTPUT_ZIP_FILE META-INF/com/google/android/updater-script
 rm -rf ./META-INF/com/google/android/
 
+# Magisk pre-rooting
 if [ $MAGISK = "y" ];
 then
-	export RECOVERYMODE=true
+	export RECOVERYMODE=true # use recovery mode flag because apparently that works
+
+	# patch and replace boot.img
 	bash $CWD/magisk/boot_patch.sh $BUILDBASE/android/output/switchroot/install/boot.img
 	cd $BUILDBASE/android/output/switchroot/install/
 	rm boot.img
 	mv $CWD/magisk/new-boot.img $BUILDBASE/android/output/switchroot/install/boot.img
 
-	zip -u $OUTPUT_ZIP_FILE boot.img
+	zip -u $OUTPUT_ZIP_FILE boot.img # zip patched boot.img into lineage zip
 fi
