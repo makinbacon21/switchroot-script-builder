@@ -258,9 +258,9 @@ rm -rf ./META-INF/com/google/android/
 
 if [ $MAGISK = "y" ];
 then
-	cd $BUILDBASE/android/output/switchroot/install/
 	export RECOVERYMODE=true
-	bash $CWD/magisk/boot_patch.sh boot.img
+	bash $CWD/magisk/boot_patch.sh $BUILDBASE/android/output/switchroot/install/boot.img
+	cd $BUILDBASE/android/output/switchroot/install/
 	rm boot.img
-	mv new-boot.img boot.img
+	mv $CWD/magisk/new-boot.img $BUILDBASE/android/output/switchroot/install/boot.img
 fi
