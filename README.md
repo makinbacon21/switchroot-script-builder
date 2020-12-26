@@ -17,6 +17,8 @@ GApps download
 Option to root (coming soon)
 
 # Requirements
+Ubuntu 20.04+ (WSL not supported, WSL2 support coming in future)
+
 16GB RAM (or smaller amounts with a sizeable swapfile)
 
 ~300 GBs of available storage
