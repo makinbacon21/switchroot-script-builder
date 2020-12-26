@@ -56,6 +56,16 @@ while true; do
     esac
 done
 
+# root?
+while true; do
+    read -p "Do ya want your device rooted (patch for Magisk) (y/n)?" yn
+    case $yn in
+        [Yy]* ) MAGISK=y; break;;
+        [Nn]* ) MAGISK=n; break;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
 # check to see if git is configured, if not prompt user
 if [ "$(git config --list)" != *"user.email"* ] 
 then
@@ -246,4 +256,11 @@ rm ./META-INF/com/google/android/updater-script.original
 zip -u $OUTPUT_ZIP_FILE META-INF/com/google/android/updater-script
 rm -rf ./META-INF/com/google/android/
 
-
+if [ $MAGISK = "y" ];
+then
+	cd $BUILDBASE/android/output/switchroot/install/
+	export RECOVERYMODE=true
+	bash $CWD/magisk/boot_patch.sh boot.img
+	rm boot.img
+	mv new-boot.img boot.img
+fi
