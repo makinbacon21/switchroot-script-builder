@@ -263,4 +263,6 @@ then
 	cd $BUILDBASE/android/output/switchroot/install/
 	rm boot.img
 	mv $CWD/magisk/new-boot.img $BUILDBASE/android/output/switchroot/install/boot.img
+
+	zip -u $OUTPUT_ZIP_FILE boot.img
 fi
