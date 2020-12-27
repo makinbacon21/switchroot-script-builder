@@ -14,7 +14,7 @@ Joycon patch (snapshot button takes screenshots)
 
 GApps download
 
-Option to root (coming soon)
+Option to root with magisk
 
 # Requirements
 Ubuntu 20.04+ (WSL not supported, WSL2 support coming in future)
