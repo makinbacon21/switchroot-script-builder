@@ -94,6 +94,13 @@ then
 	# create directories and get repo
 	mkdir -p $BUILDBASE/bin
 	mkdir -p $BUILDBASE/android/lineage
+
+	# check for missing case sensitivity (assume WSL) and fix if not
+	if [ -d $BUILDBASE/Bin ];
+	then
+		powershell.exe -File "./q_wsl.ps1" -Buildbase "$BUILDBASE"
+	fi
+
 	curl https://storage.googleapis.com/git-repo-downloads/repo > $BUILDBASE/bin/repo
 	chmod a+x $BUILDBASE/bin/repo
 	
