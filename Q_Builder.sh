@@ -136,19 +136,24 @@ source build/envsetup.sh
 
 # repopicks
 ${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-enhancements-q
+${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t icosa-bt-lineage-17.1
 ${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-nvgpu-q
 ${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-shieldtech-q
-${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t icosa-bt-lineage-17.1
+${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-beyonder-q
 ${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 287339
 ${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 284553
 
-# patches
+# bionic intrinsics patch
 cd $BUILDBASE/android/lineage/bionic
 patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/bionic_intrinsics.patch
 
-# nvcpl patch
-cd $BUILDBASE/android/lineage/frameworks/base
-patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/frameworks_base_nvcpl.patch
+# beyonder fix patch
+cd $BUILDBASE/android/lineage/device/nvidia/foster_tab
+patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/device_nvidia_foster_tab-beyonder.patch
+
+# mouse patch
+cd $BUILDBASE/android/lineage/frameworks/native
+patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/frameworks_native-mouse.patch
 
 # cpu oc patch
 if [ $CPUOC = "y" ];
@@ -165,6 +170,10 @@ then
 	cd $BUILDBASE/android/lineage/hardware/nintendo/joycond
 	patch -p1 < $CWD/patches/joycond10.patch
 fi
+
+# patch to support old TWRP
+cd $BUILDBASE/android/lineage/device/nvidia/foster
+git revert 0e1c660d -n
 
 # reset back to lineage directory
 cd $BUILDBASE/android/lineage
@@ -229,9 +238,9 @@ echo "Downloading coreboot.rom..."
 # oc coreboot check
 if [ $MEMOC == "y" ];
 then
-	curl -L -o $BUILDBASE/android/output/switchroot/android/coreboot.rom https://cdn.discordapp.com/attachments/667093920005619742/772516469078622239/coreboot-oc.rom
+	curl -L -o $BUILDBASE/android/output/switchroot/android/coreboot.rom https://github.com/PabloZaiden/switchroot-android-build/raw/5591127dc4b9ef3ed1afb0bb677d05108705caa5/external/coreboot-oc.rom
 else
-	curl -L -o $BUILDBASE/android/output/switchroot/android/coreboot.rom https://github.com/PabloZaiden/switchroot-android-build/raw/master/external/coreboot.rom
+	curl -L -o $BUILDBASE/android/output/switchroot/android/coreboot.rom https://github.com/PabloZaiden/switchroot-android-build/raw/5591127dc4b9ef3ed1afb0bb677d05108705caa5/external/coreboot.rom
 fi
 
 echo "Downloading 00-android.ini..."
