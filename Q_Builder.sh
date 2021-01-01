@@ -2,9 +2,12 @@
 
 # get current working directory
 CWD=$(pwd)
-BUILDBASE=~
+if [ -z "$BUILDBASE" ];
+then
+	BUILDBASE=~
+fi
 
-cd ~/
+cd $BUILDBASE
 
 # get threads for tasks
 JOBS=$(($(nproc) + 1))
@@ -68,7 +71,7 @@ while true; do
 done
 
 # check to see if git is configured, if not prompt user
-if [ "$(git config --list)" != *"user.email"* ];
+if [[ "$(git config --list)" != *"user.email"* ]];
 then
 	read -p "Enter your git email address: " GITEMAIL
 	read -p "Enter your name: " GITNAME
@@ -85,10 +88,10 @@ then
 	cd $BUILDBASE
 
 	# check for platform tools in PATH, add if missing
-	if [ ! grep -q "PATH=\"$HOME/platform-tools:$PATH\"" ~/.profile ]; 
+	if ! grep -q "PATH=\"\$HOME/platform-tools:\$PATH\"" ~/.profile ; 
     then
-		echo "if [ -d \"$HOME/platform-tools\" ] ; then" >> ~/.profile
-		echo "    PATH=\"$HOME/platform-tools:$PATH\"" >> ~/.profile
+		echo "if [ -d \"\$HOME/platform-tools\" ] ; then" >> ~/.profile
+		echo "    PATH=\"\$HOME/platform-tools:\$PATH\"" >> ~/.profile
 		echo "fi" >> ~/.profile
 	fi
 	
@@ -99,6 +102,7 @@ then
 	# check for missing case sensitivity (assume WSL) and fix if not
 	if [ -d $BUILDBASE/Bin ];
 	then
+		cd $CWD
 		powershell.exe -File "./wsl_cs.ps1" -Buildbase "$BUILDBASE"
 	fi
 
@@ -106,10 +110,10 @@ then
 	chmod a+x $BUILDBASE/bin/repo
 	
 	# check for bin in PATH, add if missing
-	if [ ! grep -q "PATH=\"$HOME/bin:$PATH\"" ~/.profile ]; 
+	if ! grep -q "PATH=\"\$HOME/bin:\$PATH\"" ~/.profile ; 
     then
-		echo "if [ -d \"$HOME/bin\" ] ; then" >> ~/.profile
-		echo "    PATH=\"$HOME/bin:$PATH\"" >> ~/.profile
+		echo "if [ -d \"\$HOME/bin\" ] ; then" >> ~/.profile
+		echo "    PATH=\"\$HOME/bin:\$PATH\"" >> ~/.profile
 		echo "fi" >> ~/.profile
 	fi
 
