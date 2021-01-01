@@ -280,7 +280,6 @@ rm -rf ./META-INF/com/google/android/
 # Magisk pre-rooting
 if [ $MAGISK = "y" ];
 then
-	export RECOVERYMODE=true # use recovery mode flag because apparently that works
 
 	# patch and replace boot.img
 	bash $CWD/magisk/boot_patch.sh $BUILDBASE/android/output/switchroot/install/boot.img
