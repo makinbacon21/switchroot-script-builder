@@ -17,7 +17,7 @@ GApps download
 Option to root with magisk
 
 # Requirements
-Ubuntu 20.04+ (WSL not supported, WSL2 support coming in future)
+Ubuntu 20.04+ (WSL2 works now on NTFS or ext4 filesystems)
 
 16GB RAM (or smaller amounts with a sizeable swapfile)
 
