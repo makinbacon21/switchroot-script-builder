@@ -17,7 +17,7 @@ sudo apt update
 sudo apt install bc bison build-essential ccache curl flex g++-multilib gcc-multilib git gnupg gperf 
 > imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5 libncurses5-dev 
 > libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc 
-> zip zlib1g-dev python python3 binfmt-support qemu qemu-user-static
+> zip zlib1g-dev python python3 binfmt-support qemu qemu-user-static repo
 
 # rom type?
 while true; do
@@ -96,18 +96,18 @@ then
 	fi
 	
 	# create directories and get repo
-	mkdir -p $BUILDBASE/bin
+	mkdir -p ~/bin
 	mkdir -p $BUILDBASE/android/lineage
 
 	# check for missing case sensitivity (assume WSL) and fix if not
-	if [ -d $BUILDBASE/Bin ];
+	if [ -d ~/Bin ];
 	then
 		cd $CWD
-		powershell.exe -File "./wsl_cs.ps1" -Buildbase "$BUILDBASE"
+		powershell.exe -File "./wsl_cs.ps1" -Buildbase "~"
 	fi
 
-	curl https://storage.googleapis.com/git-repo-downloads/repo > $BUILDBASE/bin/repo
-	chmod a+x $BUILDBASE/bin/repo
+	curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
+	chmod a+x ~/bin/repo
 	
 	# check for bin in PATH, add if missing
 	if ! grep -q "PATH=\"\$HOME/bin:\$PATH\"" ~/.profile ; 
