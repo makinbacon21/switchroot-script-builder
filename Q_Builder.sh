@@ -99,7 +99,7 @@ then
 	# check for missing case sensitivity (assume WSL) and fix if not
 	if [ -d $BUILDBASE/Bin ];
 	then
-		powershell.exe -File "./q_wsl.ps1" -Buildbase "$BUILDBASE"
+		powershell.exe -File "./wsl_cs.ps1" -Buildbase "$BUILDBASE"
 	fi
 
 	curl https://storage.googleapis.com/git-repo-downloads/repo > $BUILDBASE/bin/repo
