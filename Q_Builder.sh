@@ -103,7 +103,7 @@ then
 	if [ -d ~/Bin ];
 	then
 		cd $CWD
-		powershell.exe -File "./wsl_cs.ps1" -Buildbase "~"
+		powershell.exe -File "./wsl_cs.ps1" -Buildbase "$BUILDBASE"
 	fi
 
 	curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
