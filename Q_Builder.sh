@@ -105,7 +105,7 @@ then
 fi
 
 # clean build?
-if [ $CLEAN = true ];
+if [ $CLEAN -eq 1 ];
 then
 	rm -rf $BUILDBASE/android
 fi
@@ -155,7 +155,7 @@ then
 	git clone https://gitlab.com/switchroot/android/manifest.git -b lineage-17.1 local_manifests
 	repo sync --force-sync -j${JOBS}
 
-elif [ NOSYNC=true ];
+elif [ NOSYNC -eq 1 ];
 then
 	cd $BUILDBASE/android/lineage
 	repo forall -c 'git reset --hard'
