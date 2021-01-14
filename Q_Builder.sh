@@ -165,7 +165,7 @@ then
 	cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
 	patch -p1 < $CWD/patches/oc-android10.patch
 	cd $BUILDBASE/android/lineage/device/nvidia/foster
-        patch -p1 < $CWD/patches/oc_profiles.patch
+	patch -p1 < $CWD/patches/oc_profiles.patch
 fi
 
 # joycon patch
