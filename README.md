@@ -26,7 +26,13 @@ Ubuntu 20.04+ (WSL2 works now on NTFS or ext4 filesystems)
 Decent CPU (better CPU --> faster build)
 
 # Building
-It's pretty straightforward--first `chmod +x Q_Builder.sh` to make it executable, and run the script with `./Q_Builder.sh` and answer any prompts you get. Once stuff starts happening, there shouldn't be any more prompts unless you screwed something up
+Syntax: `./Q_Builder.sh [-v | --verbose] [-n | --nosync] [-c | --clean]`
+
+- `-v | --verbose`: Enables verbose mode (`set -x`) for debugging
+- `-n | --nosync`: Runs build without `git reset` or `repo sync` (keeps source tree from last build intact)
+- `-c | --clean`: Forces clean build (removes source tree and builds from scratch)
+
+First `chmod +x Q_Builder.sh` to make it executable, thne run the script with `./Q_Builder.sh` and any arguments, and answer any prompts you get. Once stuff starts happening, there shouldn't be any more prompts unless you screwed something up
 
 # Credits
 @Dajokeisonu for his direct contributions
