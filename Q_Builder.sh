@@ -7,6 +7,30 @@ then
 	BUILDBASE=~
 fi
 
+for arg in "$@"
+do
+    if [ "$arg" == "--verbose" ] || [ "$arg" == "-v" ];
+    then
+        echo "Verbose mode enabled."
+		set -x
+    fi
+	if [ "$arg" == "--nosync" ] || [ "$arg" == "-n" ];
+    then
+        echo "No-Sync mode enabled."
+		NOSYNC=true
+    fi
+	if [ "$arg" == "--clean" ] || [ "$arg" == "-c" ];
+    then
+        echo "Clean mode enabled."
+		if [ $NOSYNC ];
+		then
+			echo "Clean and No-Sync modes are incompatible...assuming Clean."
+			NOSYNC=false
+		fi
+		CLEAN=true
+    fi
+done
+
 cd $BUILDBASE
 
 # get threads for tasks
@@ -80,6 +104,11 @@ then
 fi
 
 # clean build?
+if [ $CLEAN = true ];
+then
+	rm -rf $BUILDBASE/android
+fi
+
 if [ ! -d $BUILDBASE/android ]; 
 then
 	# download and unzip latest platform tools
@@ -124,7 +153,9 @@ then
 	cd ./.repo
 	git clone https://gitlab.com/switchroot/android/manifest.git -b lineage-17.1 local_manifests
 	repo sync --force-sync -j${JOBS}
-else
+
+elif [ NOSYNC=true ];
+then
 	cd $BUILDBASE/android/lineage
 	repo forall -c 'git reset --hard'
 	repo forall -c 'git clean -fdd'
@@ -141,7 +172,6 @@ source build/envsetup.sh
 # repopicks
 ${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-enhancements-q
 ${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t icosa-bt-lineage-17.1
-${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-nvgpu-q
 ${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-shieldtech-q
 ${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-beyonder-q
 ${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 287339
