@@ -7,6 +7,7 @@ then
 	BUILDBASE=~
 fi
 
+# arguments
 for arg in "$@"
 do
     if [ "$arg" == "--verbose" ] || [ "$arg" == "-v" ];
