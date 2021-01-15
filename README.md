@@ -14,7 +14,7 @@ Joycon patch (snapshot button takes screenshots)
 
 GApps download
 
-Option to root with magisk
+Option to preroot with magisk
 
 # Requirements
 Ubuntu 20.04+ (WSL2 works now on NTFS or ext4 filesystems)
