@@ -166,52 +166,51 @@ then
 	git pull
 	cd $BUILDBASE/android/lineage
 	repo sync --force-sync -j${JOBS}
-fi
 
-# update stuff (used for clean too but kinda unnecessary)
-cd $BUILDBASE/android/lineage
-source build/envsetup.sh
+	# update stuff (used for clean too but kinda unnecessary)
+	cd $BUILDBASE/android/lineage
+	source build/envsetup.sh
 
-# repopicks
-${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-enhancements-q
-${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t icosa-bt-lineage-17.1
-${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-shieldtech-q
-${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-beyonder-q
-${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 287339
-${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 284553
+	# repopicks
+	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-enhancements-q
+	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t icosa-bt-lineage-17.1
+	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-shieldtech-q
+	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-beyonder-q
+	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 287339
+	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 284553
 
-# bionic intrinsics patch
-cd $BUILDBASE/android/lineage/bionic
-patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/bionic_intrinsics.patch
+	# bionic intrinsics patch
+	cd $BUILDBASE/android/lineage/bionic
+	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/bionic_intrinsics.patch
 
-# beyonder fix patch
-cd $BUILDBASE/android/lineage/device/nvidia/foster_tab
-patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/device_nvidia_foster_tab-beyonder.patch
+	# beyonder fix patch
+	cd $BUILDBASE/android/lineage/device/nvidia/foster_tab
+	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/device_nvidia_foster_tab-beyonder.patch
 
-# mouse patch
-cd $BUILDBASE/android/lineage/frameworks/native
-patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/frameworks_native-mouse.patch
+	# mouse patch
+	cd $BUILDBASE/android/lineage/frameworks/native
+	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/frameworks_native-mouse.patch
 
-# cpu oc patch
-if [ $CPUOC = "y" ];
-then
-	cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
-	patch -p1 < $CWD/patches/oc-android10.patch
+	# cpu oc patch
+	if [ $CPUOC = "y" ];
+	then
+		cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
+		patch -p1 < $CWD/patches/oc-android10.patch
+		cd $BUILDBASE/android/lineage/device/nvidia/foster
+		patch -p1 < $CWD/patches/oc_profiles.patch
+	fi
+
+	# joycon patch
+	if [ $JCPATCH = "y" ];
+	then
+		cd $BUILDBASE/android/lineage/hardware/nintendo/joycond
+		patch -p1 < $CWD/patches/joycond10.patch
+	fi
+
+	# patch to support old TWRP
 	cd $BUILDBASE/android/lineage/device/nvidia/foster
-	patch -p1 < $CWD/patches/oc_profiles.patch
+	git revert 0e1c660d -n
 fi
-
-# joycon patch
-if [ $JCPATCH = "y" ];
-then
-	cd $BUILDBASE/android/lineage/hardware/nintendo/joycond
-	patch -p1 < $CWD/patches/joycond10.patch
-fi
-
-# patch to support old TWRP
-cd $BUILDBASE/android/lineage/device/nvidia/foster
-git revert 0e1c660d -n
-
 # reset back to lineage directory
 cd $BUILDBASE/android/lineage
 
