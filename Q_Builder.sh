@@ -337,7 +337,8 @@ then
 	if [ -d Magisk ];
 	then
 		cd Magisk
-		git fetch --force
+		git reset --hard
+		git pull --force
 	else
 		git clone https://github.com/topjohnwu/Magisk.git
 		cd Magisk
