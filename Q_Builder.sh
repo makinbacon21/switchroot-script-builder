@@ -38,14 +38,6 @@ cd $BUILDBASE
 # get threads for tasks
 JOBS=$(($(nproc) + 1))
 
-# prompt for root and install necessary packages
-sudo apt update
-sudo apt install bc bison build-essential ccache curl flex g++-multilib gcc-multilib git gnupg gperf 
-> imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5 libncurses5-dev 
-> libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc 
-> zip zlib1g-dev python python3 binfmt-support qemu qemu-user-static repo default-jdk gradle
-sudo apt upgrade
-
 # rom type?
 while true; do
     read -p "Do ya want icosa (i) or foster_tab (m) or android tv (t)?" imt
@@ -96,6 +88,14 @@ while true; do
         * ) echo "Please answer yes or no.";;
     esac
 done
+
+# prompt for root and install necessary packages
+sudo apt update
+sudo apt install bc bison build-essential ccache curl flex g++-multilib gcc-multilib git gnupg gperf 
+> imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5 libncurses5-dev 
+> libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc 
+> zip zlib1g-dev python python3 binfmt-support qemu qemu-user-static repo default-jdk gradle
+sudo apt upgrade
 
 # check to see if git is configured, if not prompt user
 if [[ "$(git config --list)" != *"user.email"* ]];
