@@ -313,10 +313,10 @@ rm -rf ./META-INF/com/google/android/
 # Magisk pre-rooting
 if [ $MAGISK = "y" ];
 then	
+	cd $BUILDBASE
 	# get android sdk cmd tools
 	if [ -z "$ANDROID_SDK_ROOT" ];
 	then
-		cd $BUILDBASE
 		wget https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip
 		unzip commandlinetools-linux-6858069_latest.zip
 		export ANDROID_SDK_ROOT="$BUILDBASE/cmdline-tools"
