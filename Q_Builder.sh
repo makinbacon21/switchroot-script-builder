@@ -320,8 +320,7 @@ then
 		wget https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip
 		unzip commandlinetools-linux-6858069_latest.zip
 		export ANDROID_SDK_ROOT="$BUILDBASE/cmdline-tools"
-		echo PATH="$BUILDBASE/cmdline-tools:$BUILDBASE/cmdline-tools/bin:$PATH"
-		yes | sdkmanager --sdk_root=$ANDROID_SDK_ROOT --licenses
+		export PATH="$BUILDBASE/cmdline-tools:$BUILDBASE/cmdline-tools/bin:$PATH"
 	fi
 
 	# get android ndk
@@ -334,7 +333,10 @@ then
 		cp android-ndk-r21d/*  cmdline-tools/ndk/magisk/
 	fi
 
-	# 
+	# register sdk licenses
+	yes | sdkmanager --sdk_root=$ANDROID_SDK_ROOT --licenses
+
+	# reset and pull Magisk
 	if [ -d Magisk ];
 	then
 		cd Magisk
@@ -345,7 +347,7 @@ then
 		cd Magisk
 	fi
 
-	if [ VERBOSE -eq 1 ]
+	if [ -z $VERBOSE ]
 	then
 		./build.py -v all
 	else
