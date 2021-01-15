@@ -317,13 +317,19 @@ then
 	if [ -z "$ANDROID_SDK_ROOT" ];
 	then
 		wget https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip
-		unzip commandlinetools-linux-6858069_latest.zip
+		if [ -d cmdline-tools ];
+		then
+			echo "A" | unzip commandlinetools-linux-6858069_latest.zip
+		else
+			unzip commandlinetools-linux-6858069_latest.zip
+		fi
+		
 		export ANDROID_SDK_ROOT="$BUILDBASE/cmdline-tools"
 		export PATH="$BUILDBASE/cmdline-tools:$BUILDBASE/cmdline-tools/bin:$PATH"
 	fi
 
 	# get android ndk
-	if [ -d cmdline-tools/ndk  ];
+	if [ ! -d cmdline-tools/ndk  ];
 	then
 		wget https://dl.google.com/android/repository/android-ndk-r21d-linux-x86_64.zip
 		unzip android-ndk-r21d-linux-x86_64.zip
