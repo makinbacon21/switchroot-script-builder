@@ -13,6 +13,7 @@ do
     if [ "$arg" == "--verbose" ] || [ "$arg" == "-v" ];
     then
         echo "Verbose mode enabled."
+		VERBOSE=true
 		set -x
     fi
 	if [ "$arg" == "--nosync" ] || [ "$arg" == "-n" ];
@@ -42,7 +43,7 @@ sudo apt update
 sudo apt install bc bison build-essential ccache curl flex g++-multilib gcc-multilib git gnupg gperf 
 > imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5 libncurses5-dev 
 > libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc 
-> zip zlib1g-dev python python3 binfmt-support qemu qemu-user-static repo
+> zip zlib1g-dev python python3 binfmt-support qemu qemu-user-static repo default-jdk gradle
 
 # rom type?
 while true; do
@@ -310,13 +311,58 @@ rm -rf ./META-INF/com/google/android/
 
 # Magisk pre-rooting
 if [ $MAGISK = "y" ];
-then
+then	
+	# get android sdk cmd tools
+	if [ -z "$ANDROID_SDK_ROOT" ];
+	then
+		cd $BUILDBASE
+		wget https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip
+		unzip commandlinetools-linux-6858069_latest.zip
+		export ANDROID_SDK_ROOT="$BUILDBASE/cmdline-tools"
+		echo PATH="$BUILDBASE/cmdline-tools:$BUILDBASE/cmdline-tools/bin:$PATH"
+		yes | sdkmanager --sdk_root=$ANDROID_SDK_ROOT --licenses
+	fi
+
+	# get android ndk
+	if [ -d cmdline-tools/ndk  ];
+	then
+		wget https://dl.google.com/android/repository/android-ndk-r21d-linux-x86_64.zip
+		unzip android-ndk-r21d-linux-x86_64.zip
+		mkdir cmdline-tools/ndk/
+		mkdir cmdline-tools/ndk/magisk
+		cp android-ndk-r21d/*  cmdline-tools/ndk/magisk/
+	fi
+
+	# 
+	if [ -d Magisk ];
+	then
+		cd Magisk
+		git pull --force
+	else
+		git clone https://github.com/topjohnwu/Magisk.git
+		cd Magisk
+	fi
+
+	if [ VERBOSE -eq 1 ]
+	then
+		./build.py -v all
+	else
+		./build.py all
+	fi
+
+	# unpack magisk zip and move all required files to x86 folder
+	cd out
+	unzip magisk-release.zip
+	cp common/* x86/
+	cp $BUILDBASE/android/output/switchroot/install/boot.img x86/
+	cd x86
 
 	# patch and replace boot.img
-	bash $CWD/magisk/boot_patch.sh $BUILDBASE/android/output/switchroot/install/boot.img
-	cd $BUILDBASE/android/output/switchroot/install/
-	rm boot.img
-	mv $CWD/magisk/new-boot.img $BUILDBASE/android/output/switchroot/install/boot.img
+	bash ./boot-patch.sh boot.img
+	rm $BUILDBASE/android/output/switchroot/install/boot.img
+	mv new-boot.img $BUILDBASE/android/output/switchroot/install/boot.img
 
-	zip -u $OUTPUT_ZIP_FILE boot.img # zip patched boot.img into lineage zip
+	# zip patched boot.img into lineage zip
+	cd $BUILDBASE/android/output/switchroot/install/
+	zip -u $OUTPUT_ZIP_FILE boot.img
 fi
