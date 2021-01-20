@@ -194,7 +194,7 @@ then
 
 	# icosa firmware patch
 	cd $BUILDBASE/android/lineage/vendor/firmware
-	git apply < $BUILDBASE/android/lineage/.repo/local_manifests/patches/vendor_firmware_icosa.patch
+	git am < $BUILDBASE/android/lineage/.repo/local_manifests/patches/vendor_firmware_icosa.patch
 
 	# cpu oc patch
 	if [ $CPUOC = "y" ];
