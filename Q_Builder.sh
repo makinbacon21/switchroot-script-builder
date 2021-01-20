@@ -191,6 +191,10 @@ then
 	cd $BUILDBASE/android/lineage/frameworks/native
 	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/frameworks_native-mouse.patch
 
+	# icosa firmware patch
+	cd $BUILDBASE/android/lineage/vendor/firmware
+	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/vendor_firmware_icosa.patch
+
 	# cpu oc patch
 	if [ $CPUOC = "y" ];
 	then
