@@ -196,6 +196,14 @@ then
 	cd $BUILDBASE/android/lineage/vendor/firmware
 	git am < $BUILDBASE/android/lineage/.repo/local_manifests/patches/vendor_firmware_icosa.patch
 
+	# art hack patch
+	cd $BUILDBASE/android/lineage/art
+	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/art-hack.patch
+
+	# atv resolution patch
+	cd $BUILDBASE/android/lineage/device/lineage
+	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/atv-res.patch
+
 	# cpu oc patch
 	if [ $CPUOC = "y" ];
 	then
