@@ -178,6 +178,7 @@ then
 	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-beyonder-q
 	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 300860
 	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 287339
+	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 302339
 	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 284553
 
 	# bionic intrinsics patch
