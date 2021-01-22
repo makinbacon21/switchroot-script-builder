@@ -31,6 +31,30 @@ do
 		fi
 		CLEAN=true
     fi
+	if [ "$arg" == "--noccache" ] || [ "$arg" == "-e" ];
+    then
+        echo "CCache disabled."
+		NOCCACHE=true
+    fi
+	if [ "$arg" == "--help" ] || [ "$arg" == "-h" ];
+    then
+		# long-winded help message
+        printf "Welcome to Switchroot Script Builder!\nThe current version of Switchroot Android is Q (10), based on LineageOS 17.1."
+		printf "USAGE: ./Q_Builder.sh [-v | --verbose] [-n | --nosync] [-c | --clean] [-e | --noccache] [-h | --help]\n\n"
+		printf "-v | --verbose\t\tActivates verbose mode\n\n"
+		printf "-n | --nosync\t\tDisables repo syncing and git cleaning and just forces a direct rebuild\n\n"
+		printf "-c | --clean\t\tForces a clean build--deletes BUILDBASE/android and redownloads sources\n\n"
+		printf "-e | --noccache\t\tNOT RECOMMENDED--disables using CCache for building, which reduces storage consumption but can have unintended consequences\n\n"
+		printf "-h | --help\t\tDisplay this message\n\n"
+		printf "MORE INFO:\n\nExport the BUILDBASE environment variable as the directory you want to build in\nEXAMPLE: export BUILDBASE=/home/tmakin\n\n"
+		printf "WSL2 users should note that NTFS sucks and ext4 is recommended, and mounting an external NTFS drive is supported in newer Insider Dev Channel builds\nFor more info, see https://docs.microsoft.com/en-us/windows/wsl/wsl2-mount-disk"
+		
+		# attempt soft kill
+		return -1
+		
+		# force exit on fail
+		exit -1
+    fi
 done
 
 cd $BUILDBASE
@@ -228,10 +252,15 @@ fi
 cd $BUILDBASE/android/lineage
 
 # ccache
-export USE_CCACHE=1
-export CCACHE_EXEC="/usr/bin/ccache"
-export WITHOUT_CHECK_API=true
-ccache -M 50G
+if [ NOCCACHE = false ];
+then
+	export USE_CCACHE=1
+	export CCACHE_EXEC="/usr/bin/ccache"
+	export WITHOUT_CHECK_API=true
+	ccache -M 50G
+else
+	export USE_CCACHE=0
+fi
 
 ### Rebuild (clean)
 mkdir -p $BUILDBASE/android/lineage/out/target/product/$OUTPUTFILE/vendor/lib/modules
