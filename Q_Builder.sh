@@ -310,7 +310,7 @@ curl -L -o $BUILDBASE/android/output/switchroot/install/twrp.img https://github.
 echo "Downloading coreboot.rom..."
 
 # oc coreboot check
-if [ $MEMOC == "y" ];
+if [ $MEMOC = "y" ];
 then
 	curl -L -o $BUILDBASE/android/output/switchroot/android/coreboot.rom https://github.com/PabloZaiden/switchroot-android-build/raw/5591127dc4b9ef3ed1afb0bb677d05108705caa5/external/coreboot-oc.rom
 else
@@ -377,4 +377,10 @@ then
 	# zip patched boot.img into lineage zip
 	cd $BUILDBASE/android/output/switchroot/install/
 	zip -u $OUTPUT_ZIP_FILE boot.img
+fi
+
+# occoreboot zip injection (probably unneceessary but why not)
+if [ $MEMOC = "y" ];
+then
+	zip -u $BUILDBASE/android/output/switchroot/android/coreboot.rom $OUTPUT_ZIP_FILE firmware-update/coreboot.rom
 fi
