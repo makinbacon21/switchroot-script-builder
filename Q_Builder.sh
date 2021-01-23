@@ -45,12 +45,8 @@ do
 		printf -- "-n | --nosync\t\tDisables repo syncing and git cleaning and just forces a direct rebuild\n\n"
 		printf -- "-c | --clean\t\tForces a clean build--deletes BUILDBASE/android and redownloads sources\n\n"
 		printf -- "-e | --noccache\t\tNOT RECOMMENDED--disables using CCache for building, which reduces storage consumption but can have unintended consequences\n\n"
-		printf -- "-h | --help\t\tDisplay this message\n\n"
 		printf "MORE INFO:\n\nExport the BUILDBASE environment variable as the directory you want to build in\nEXAMPLE: export BUILDBASE=/home/tmakin\n\n"
 		printf "WSL2 users should note that NTFS sucks and ext4 is recommended, and mounting an external NTFS drive is supported in newer Insider Dev Channel builds\nFor more info, see https://docs.microsoft.com/en-us/windows/wsl/wsl2-mount-disk"
-		
-		# attempt soft kill
-		return -1
 		
 		# force exit on fail
 		exit -1
