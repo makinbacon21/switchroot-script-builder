@@ -355,14 +355,20 @@ then
 	# get magisk
 	LATEST_RELEASE=$(curl -L -s -H 'Accept: application/json' https://github.com/topjohnwu/Magisk/releases/latest)
 	LATEST_VERSION=$(echo $LATEST_RELEASE | sed -e 's/.*"tag_name":"\([^"]*\)".*/\1/')
+	if [[ "$LATEST_VERSON" == "manager"* ]];
+	then
+		LATEST_VERSION=v21.4
+	fi
 	MAGISK_URL="https://github.com/topjohnwu/Magisk/releases/download/${LATEST_VERSION}/Magisk-${LATEST_VERSION}.zip"
 	wget $MAGISK_URL
 
 	# unpack magisk zip and move all required files to x86 folder
-	unzip Magisk-$LATEST_VERSION.zip
+	mkdir $BUILDBASE/magisk
+	unzip Magisk-$LATEST_VERSION.zip $BUILDBASE/magisk
+	cd $BUILDBASE/magisk
 	cp common/* x86/
-	mv $BUILDBASE/android/output/switchroot/install/boot.img x86/boot.img
-	cd x86
+	mv $BUILDBASE/android/output/switchroot/install/boot.img $BUILDBASE/magisk/x86/boot.img
+	cd $BUILDBASE/magisk/x86
 
 	# patch and replace boot.img
 	bash ./boot-patch.sh boot.img
