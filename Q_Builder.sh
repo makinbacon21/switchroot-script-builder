@@ -114,7 +114,7 @@ sudo apt update
 sudo apt install bc bison build-essential ccache curl flex g++-multilib gcc-multilib git gnupg gperf 
 > imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5 libncurses5-dev 
 > libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc 
-> zip zlib1g-dev python python3 binfmt-support qemu qemu-user-static repo default-jdk gradle
+> zip zlib1g-dev python python3 binfmt-support qemu qemu-user-static repo
 sudo apt upgrade
 
 # check to see if git is configured, if not prompt user
@@ -351,62 +351,21 @@ rm -rf ./META-INF/com/google/android/
 if [ $MAGISK = "y" ];
 then	
 	cd $BUILDBASE
-	# get android sdk cmd tools
-	if [ -z "$ANDROID_SDK_ROOT" ];
-	then
-		wget https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip
-		if [ -d cmdline-tools ];
-		then
-			echo "A" | unzip commandlinetools-linux-6858069_latest.zip
-		else
-			unzip commandlinetools-linux-6858069_latest.zip
-		fi
-		
-		export ANDROID_SDK_ROOT="$BUILDBASE/cmdline-tools"
-		export PATH="$BUILDBASE/cmdline-tools:$BUILDBASE/cmdline-tools/bin:$PATH"
-	fi
-
-	# get android ndk
-	if [ ! -d cmdline-tools/ndk  ];
-	then
-		wget https://dl.google.com/android/repository/android-ndk-r21d-linux-x86_64.zip
-		unzip android-ndk-r21d-linux-x86_64.zip
-		mkdir cmdline-tools/ndk/
-		mkdir cmdline-tools/ndk/magisk
-		cp android-ndk-r21d/*  cmdline-tools/ndk/magisk/
-	fi
-
-	# register sdk licenses
-	yes | sdkmanager --sdk_root=$ANDROID_SDK_ROOT --licenses
-
-	# reset and pull Magisk
-	if [ -d Magisk ];
-	then
-		cd Magisk
-		git reset --hard
-		git pull --force
-	else
-		git clone https://github.com/topjohnwu/Magisk.git
-		cd Magisk
-	fi
-
-	if [ -z $VERBOSE ]
-	then
-		./build.py -v all
-	else
-		./build.py all
-	fi
+	
+	# get magisk
+	LATEST_RELEASE=$(curl -L -s -H 'Accept: application/json' https://github.com/topjohnwu/Magisk/releases/latest)
+	LATEST_VERSION=$(echo $LATEST_RELEASE | sed -e 's/.*"tag_name":"\([^"]*\)".*/\1/')
+	MAGISK_URL="https://github.com/topjohnwu/Magisk/releases/download/${LATEST_VERSION}/Magisk-${LATEST_VERSION}.zip"
+	wget $MAGISK_URL
 
 	# unpack magisk zip and move all required files to x86 folder
-	cd out
-	unzip magisk-release.zip
+	unzip Magisk-$LATEST_VERSION.zip
 	cp common/* x86/
-	cp $BUILDBASE/android/output/switchroot/install/boot.img x86/
+	mv $BUILDBASE/android/output/switchroot/install/boot.img x86/boot.img
 	cd x86
 
 	# patch and replace boot.img
 	bash ./boot-patch.sh boot.img
-	rm $BUILDBASE/android/output/switchroot/install/boot.img
 	mv new-boot.img $BUILDBASE/android/output/switchroot/install/boot.img
 
 	# zip patched boot.img into lineage zip
