@@ -222,7 +222,7 @@ then
 
 	# atv resolution patch
 	cd $BUILDBASE/android/lineage/device/lineage
-	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/atv-res.patch
+	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/device_lineage_atv-res.patch
 
 	# cpu oc patch
 	if [ $CPUOC = "y" ];
