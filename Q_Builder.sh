@@ -198,6 +198,7 @@ then
 	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 300860
 	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 287339
 	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 302339
+	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 302554
 	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 284553
 
 	# bionic intrinsics patch
@@ -212,13 +213,13 @@ then
 	cd $BUILDBASE/android/lineage/frameworks/native
 	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/frameworks_native-mouse.patch
 
-	# icosa firmware patch
-	cd $BUILDBASE/android/lineage/vendor/firmware
-	git am < $BUILDBASE/android/lineage/.repo/local_manifests/patches/vendor_firmware_icosa.patch
+	# desktop dock patch
+	cd $BUILDBASE/android/lineage/frameworks/base
+	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/frameworks_base-desktop-dock.patch
 
-	# art hack patch
-	cd $BUILDBASE/android/lineage/art
-	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/art-hack.patch
+	# gatekeeper hack patch
+	cd $BUILDBASE/android/lineage/system/core
+	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/system_core-gatekeeper-hack.patch
 
 	# atv resolution patch
 	cd $BUILDBASE/android/lineage/device/lineage
