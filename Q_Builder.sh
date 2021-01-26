@@ -226,7 +226,7 @@ then
 	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/system_core-gatekeeper-hack.patch
 
 	# atv resolution patch
-	cd $BUILDBASE/android/lineage/device/lineage
+	cd $BUILDBASE/android/lineage/device/lineage/atv
 	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/device_lineage_atv-res.patch
 
 	# cpu oc patch
