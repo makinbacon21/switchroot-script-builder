@@ -114,7 +114,8 @@ sudo apt update
 sudo apt install bc bison build-essential ccache curl flex g++-multilib gcc-multilib git gnupg gperf 
 > imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5 libncurses5-dev 
 > libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc 
-> zip zlib1g-dev python python3 binfmt-support qemu qemu-user-static repo
+> zip zlib1g-dev python python3 binfmt-support qemu qemu-user-static repo qemu-user qemu-user-static 
+> gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu binutils-aarch64-linux-gnu-dbg build-essential
 sudo apt -y upgrade
 
 # check to see if git is configured, if not prompt user
@@ -368,14 +369,14 @@ then
 	MAGISK_URL="https://github.com/topjohnwu/Magisk/releases/download/${LATEST_VERSION}/Magisk-${LATEST_VERSION}.zip"
 	wget $MAGISK_URL
 
-	# clean folder, unpack magisk zip, and move all required files to x86 folder
+	# clean folder, unpack magisk zip, and move all required files to arm folder
 	rm -rf $BUILDBASE/magisk
 	mkdir $BUILDBASE/magisk
 	unzip Magisk-$LATEST_VERSION.zip -d $BUILDBASE/magisk
 	cd $BUILDBASE/magisk
-	cp common/* x86/
-	mv $BUILDBASE/android/output/switchroot/install/boot.img $BUILDBASE/magisk/x86/boot.img
-	cd $BUILDBASE/magisk/x86
+	cp common/* arm/
+	mv $BUILDBASE/android/output/switchroot/install/boot.img $BUILDBASE/magisk/arm/boot.img
+	cd $BUILDBASE/magisk/arm
 	mv magiskinit magiskinit32
 	mv magiskinit64 magiskinit
 
