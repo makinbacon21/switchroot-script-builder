@@ -91,7 +91,7 @@ done
 
 # joycon-swap?
 while true; do
-    read -p "Do ya want the joycon trigger patch (y/n)?" yn
+    read -p "Do ya want the screenshot button patch (y/n)?" yn
     case $yn in
         [Yy]* ) JCPATCH=y; break;;
         [Nn]* ) JCPATCH=n; break;;
