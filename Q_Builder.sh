@@ -376,6 +376,8 @@ then
 	cp common/* x86/
 	mv $BUILDBASE/android/output/switchroot/install/boot.img $BUILDBASE/magisk/x86/boot.img
 	cd $BUILDBASE/magisk/x86
+	mv magiskinit magiskinit32
+	mv magiskinit64 magiskinit
 
 	# patch and replace boot.img
 	bash ./boot_patch.sh boot.img
