@@ -129,6 +129,7 @@ fi
 # clean build?
 if [ ! -z $CLEAN ];
 then
+	echo "Cleaning android folder..."
 	rm -rf $BUILDBASE/android
 fi
 
