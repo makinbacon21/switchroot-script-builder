@@ -368,9 +368,10 @@ then
 	MAGISK_URL="https://github.com/topjohnwu/Magisk/releases/download/${LATEST_VERSION}/Magisk-${LATEST_VERSION}.zip"
 	wget $MAGISK_URL
 
-	# unpack magisk zip and move all required files to x86 folder
+	# clean folder, unpack magisk zip, and move all required files to x86 folder
+	rm -rf $BUILDBASE/magisk
 	mkdir $BUILDBASE/magisk
-	unzip Magisk-$LATEST_VERSION.zip $BUILDBASE/magisk
+	unzip Magisk-$LATEST_VERSION.zip -d $BUILDBASE/magisk
 	cd $BUILDBASE/magisk
 	cp common/* x86/
 	mv $BUILDBASE/android/output/switchroot/install/boot.img $BUILDBASE/magisk/x86/boot.img
