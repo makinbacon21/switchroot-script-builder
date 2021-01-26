@@ -1,7 +1,7 @@
-diff --git a/initfiles/power.abca.rc b/initfiles/power.abca.rc
+diff --git a/initfiles/power.icosa.rc b/initfiles/power.icosa.rc
 index 73b635c..1ebf2b4 100644
---- a/initfiles/power.abca.rc
-+++ b/initfiles/power.abca.rc
+--- a/initfiles/power.icosa.rc
++++ b/initfiles/power.icosa.rc
 @@ -1,7 +1,7 @@
  # Key   Docked Perf   Docked Opt / Undocked Perf   Undocked Opt
  NV_DEFAULT_MODE 0

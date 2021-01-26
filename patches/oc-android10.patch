@@ -12,7 +12,7 @@ index f17014b9c38d..311edf15c48c 100644
  	}
  	td->lut_size = j;
 diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-index 1d63c90cff00..d2039f8083f0 100644
+index 1d63c90cff00..5e263e2ba662 100644
 --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
 +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
 @@ -99,7 +99,7 @@ static const unsigned long tegra210_cpu_max_freq_table[] = {
@@ -29,13 +29,13 @@ index 1d63c90cff00..d2039f8083f0 100644
  		{1683000000UL,	{1168000, 0, 0} }, \
  		{1785000000UL,	{1227500, 0, 0} }, \
 +		{1887000000UL,	{1241400, 0, 0} }, \
-+		{1989000000UL,	{1270408, 0, 0} }, \
-+		{2091000000UL,	{1298886, 0, 0} }, \
+++		{1989000000UL,	{1270408, 0, 0} }, \
+++		{2091000000UL,	{1298886, 0, 0} }, \
  		{0,           	{      0, 0, 0} }, \
  	}
  
 diff --git a/drivers/soc/tegra/tegra210-dvfs.c b/drivers/soc/tegra/tegra210-dvfs.c
-index 1f3d664c53e0..30f4e70e3151 100644
+index 1f3d664c53e0..194688b11104 100644
 --- a/drivers/soc/tegra/tegra210-dvfs.c
 +++ b/drivers/soc/tegra/tegra210-dvfs.c
 @@ -377,6 +377,9 @@ static struct dvfs cpu_dvfs = {
@@ -43,8 +43,8 @@ index 1f3d664c53e0..30f4e70e3151 100644
  		{1683000000UL,	{  5100873,  -279186,     4747 } }, \
  		{1785000000UL,	{  5100873,  -279186,     4747 } }, \
 +		{1887000000UL,	{  5100873,  -279186,     4747 } }, \
-+		{1989000000UL,	{  5100873,  -279186,     4747 } }, \
-+		{2091000000UL,	{  5100873,  -279186,     4747 } }, \
+++		{1989000000UL,	{  5100873,  -279186,     4747 } }, \
+++		{2091000000UL,	{  5100873,  -279186,     4747 } }, \
  		{0,           	{ } }, \
  	}
  
