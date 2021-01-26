@@ -138,7 +138,7 @@ then
 	# clean, download, and unzip latest platform tools
 	rm -rf platform-tools-latest-linux.zip
 	rm -rf platform-tools-latest-linux.zip.*
-	rm -rf platform-tools-latest-linux
+	rm -rf platform-tools
 	wget https://dl.google.com/android/repository/platform-tools-latest-linux.zip
 	unzip platform-tools-latest-linux.zip -d ~
 	cd $BUILDBASE
