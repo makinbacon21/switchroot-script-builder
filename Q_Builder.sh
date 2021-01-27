@@ -245,10 +245,6 @@ then
 		cd $BUILDBASE/android/lineage/hardware/nintendo/joycond
 		patch -p1 < $CWD/patches/joycond10.patch
 	fi
-
-	# patch to support old TWRP
-	cd $BUILDBASE/android/lineage/device/nvidia/foster
-	git revert 0e1c660d -n
 fi
 # reset back to lineage directory
 cd $BUILDBASE/android/lineage
