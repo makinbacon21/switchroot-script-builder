@@ -1,5 +1,9 @@
-# Switchroot Android Q Script Builder
+# Switchroot Android Q Scripted Builder
 One script to rule them all
+
+Automates the steps of the Q-Tips Guide (https://gitlab.com/ZachyCatGames/q-tips-guide)
+
+DISCLAIMER: Switchroot Android Q is still in development and may harm your device--a public image release will come soon, but this script builds the early-stage product for testing purposes. The current public release (Switchroot Android Oreo) is available using this guide: https://forum.xda-developers.com/t/rom-unofficial-8-1-switchroot-lineageos-15-1.3951389/
 
 # Features
 Supports Android (`icosa`) (`foster_tab`) and Android TV (`foster`)
@@ -17,13 +21,15 @@ GApps download
 Option to preroot with magisk
 
 # Requirements
-Ubuntu 20.04+ (WSL2 works now on NTFS or ext4 filesystems)
+Ubuntu 20.04+ (WSL2 works now on NTFS or ext4 filesystems, but NTFS is kinda slow and not recommended)
 
 16GB RAM (or smaller amounts with a sizeable swapfile)
 
-~300 GBs of available storage
+~300 GBs of available storage (sources + ccache)
 
 Decent CPU (better CPU --> faster build)
+
+Unpatched Erista-codenamed Nintendo Switch (https://ismyswitchpatched.com/) with RCM jig to trigger exploit
 
 # Building
 Syntax: `./Q_Builder.sh [-v | --verbose] [-n | --nosync] [-c | --clean]`
