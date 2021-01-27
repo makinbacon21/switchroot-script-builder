@@ -141,7 +141,7 @@ then
 	rm -rf platform-tools-latest-linux.zip.*
 	rm -rf platform-tools
 	wget https://dl.google.com/android/repository/platform-tools-latest-linux.zip
-	unzip platform-tools-latest-linux.zip -d ~
+	unzip platform-tools-latest-linux.zip
 	cd $BUILDBASE
 
 	# check for platform tools in PATH, add if missing
