@@ -1,4 +1,4 @@
-# Switchroot Android Q Script Builder
+# Switchroot Android Q Scripted Builder
 One script to rule them all
 
 # Features
@@ -17,11 +17,11 @@ GApps download
 Option to preroot with magisk
 
 # Requirements
-Ubuntu 20.04+ (WSL2 works now on NTFS or ext4 filesystems)
+Ubuntu 20.04+ (WSL2 works now on NTFS or ext4 filesystems, but NTFS is kinda slow and not recommended)
 
 16GB RAM (or smaller amounts with a sizeable swapfile)
 
-~300 GBs of available storage
+~300 GBs of available storage (sources + ccache)
 
 Decent CPU (better CPU --> faster build)
 
