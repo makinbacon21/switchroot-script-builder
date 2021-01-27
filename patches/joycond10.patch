@@ -1,9 +1,9 @@
 diff --git a/android/Vendor_057e_Product_2008.kl b/android/Vendor_057e_Product_2008.kl
-index  649073d..1a9b5d7 100644
+index 649073d..1a9b5d7 100644
 --- a/android/Vendor_057e_Product_2008.kl
 +++ b/android/Vendor_057e_Product_2008.kl
 @@ -1,4 +1,4 @@
--key 309   BACK
+-key 309   MEDIA_PLAY_PAUSE
 +key 309   SYSRQ
  key 314   BUTTON_SELECT
  key 318   BUTTON_THUMBR
