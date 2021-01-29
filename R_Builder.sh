@@ -69,46 +69,6 @@ while true; do
     esac
 done
 
-# oc coreboot?
-while true; do
-    read -p "Do ya want an 1862 MHz memory OC (y/n)?" yn
-    case $yn in
-        [Yy]* ) MEMOC=y; break;;
-        [Nn]* ) MEMOC=n; break;;
-        * ) echo "Please answer yes or no.";;
-    esac
-done
-
-# oc patch?
-while true; do
-    read -p "Do ya want a 2091 MHz CPU OC (y/n)?" yn
-    case $yn in
-        [Yy]* ) CPUOC=y; break;;
-        [Nn]* ) CPUOC=n; break;;
-        * ) echo "Please answer yes or no.";;
-    esac
-done
-
-# joycon-swap?
-while true; do
-    read -p "Do ya want the screenshot button patch (y/n)?" yn
-    case $yn in
-        [Yy]* ) JCPATCH=y; break;;
-        [Nn]* ) JCPATCH=n; break;;
-        * ) echo "Please answer yes or no.";;
-    esac
-done
-
-# root?
-while true; do
-    read -p "Do ya want your device rooted (patch for Magisk) (y/n)?" yn
-    case $yn in
-        [Yy]* ) MAGISK=y; break;;
-        [Nn]* ) MAGISK=n; break;;
-        * ) echo "Please answer yes or no.";;
-    esac
-done
-
 # prompt for root and install necessary packages
 sudo apt update
 sudo apt install bc bison build-essential ccache curl flex g++-multilib gcc-multilib git gnupg gperf 
@@ -197,7 +157,16 @@ then
 	source build/envsetup.sh
 
 	# repopicks
-	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-enhancements-r
+	# BROKEN ${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-enhancements-r
+
+	# patches
+	
+	patch -d device/nvidia/foster -p1 <  .repo/local_manifests/patches/device_nvidia_foster-syspartition.patch
+	patch -d device/nvidia/foster -p1 <  .repo/local_manifests/patches/device_nvidia_foster-vendorinit-HACK.patch
+	patch -d device/nvidia/tegra-common -p1 <  .repo/local_manifests/patches/device_nvidia_tegra-common-nvphsd-HACK.patch
+	patch -d device/nvidia/tegra-common -p1 <  .repo/local_manifests/patches/device_nvidia_tegra-common-vendor-HACKS.patch
+	patch -d device/nvidia/touch -p1 <  .repo/local_manifests/patches/device_nvidia_touch-raydium-HACK.patch
+
 fi
 # reset back to lineage directory
 cd $BUILDBASE/android/lineage
