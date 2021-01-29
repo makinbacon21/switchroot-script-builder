@@ -39,7 +39,7 @@ do
 	if [ "$arg" == "--help" ] || [ "$arg" == "-h" ];
     then
 		# long-winded help message
-        printf "\nWelcome to Switchroot Script Builder!\nThe current version of Switchroot Android is Q (10), based on LineageOS 17.1.\n\n"
+        printf "\nWelcome to Switchroot Script Builder!\nThe current version of Switchroot Android is Q (10), based on LineageOS 18.1.\n\n"
 		printf "USAGE: ./Q_Builder.sh [-v | --verbose] [-n | --nosync] [-c | --clean] [-e | --noccache] [-h | --help]\n"
 		printf -- "-v | --verbose\t\tActivates verbose mode\n"
 		printf -- "-n | --nosync\t\tDisables repo syncing and git cleaning and just forces a direct rebuild\n"
@@ -176,10 +176,10 @@ then
 
 	# initialize repo, sync
 	cd $BUILDBASE/android/lineage
-	repo init -u https://github.com/LineageOS/android.git -b lineage-17.1
+	repo init -u https://github.com/LineageOS/android.git -b lineage-18.1
 	repo sync --force-sync -j${JOBS}
 	cd ./.repo
-	git clone https://gitlab.com/switchroot/android/manifest.git -b lineage-17.1 local_manifests
+	git clone https://gitlab.com/makinbacon17/manifest.git -b lineage-18.1 local_manifests
 	repo sync --force-sync -j${JOBS}
 
 elif [ -z $NOSYNC ];
@@ -197,54 +197,7 @@ then
 	source build/envsetup.sh
 
 	# repopicks
-	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t icosa-bt-lineage-17.1
-	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-shieldtech-q
-	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-beyonder-q
-	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 300860
-	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 287339
-	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 302339
-	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 302554
-	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 284553
-
-	# bionic intrinsics patch
-	cd $BUILDBASE/android/lineage/bionic
-	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/bionic_intrinsics.patch
-
-	# beyonder fix patch
-	cd $BUILDBASE/android/lineage/device/nvidia/foster_tab
-	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/device_nvidia_foster_tab-beyonder.patch
-
-	# mouse patch
-	cd $BUILDBASE/android/lineage/frameworks/native
-	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/frameworks_native-mouse.patch
-
-	# desktop dock patch
-	cd $BUILDBASE/android/lineage/frameworks/base
-	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/frameworks_base-desktop-dock.patch
-
-	# gatekeeper hack patch
-	cd $BUILDBASE/android/lineage/system/core
-	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/system_core-gatekeeper-hack.patch
-
-	# atv resolution patch
-	cd $BUILDBASE/android/lineage/device/lineage/atv
-	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/device_lineage_atv-res.patch
-
-	# cpu oc patch
-	if [ $CPUOC = "y" ];
-	then
-		cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
-		patch -p1 < $CWD/patches/oc-android10.patch
-		cd $BUILDBASE/android/lineage/device/nvidia/foster
-		patch -p1 < $CWD/patches/oc_profiles.patch
-	fi
-
-	# joycon patch
-	if [ $JCPATCH = "y" ];
-	then
-		cd $BUILDBASE/android/lineage/hardware/nintendo/joycond
-		patch -p1 < $CWD/patches/joycond10.patch
-	fi
+	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-enhancements-r
 fi
 # reset back to lineage directory
 cd $BUILDBASE/android/lineage
@@ -288,7 +241,7 @@ make -j${JOBS} bacon
 
 cd ${BUILDBASE}
 
-ZIP_FILE=$(ls -rt ${BUILDBASE}/android/lineage/out/target/product/$OUTPUTFILE/lineage-17.1-*-UNOFFICIAL-$OUTPUTFILE.zip | tail -1)
+ZIP_FILE=$(ls -rt ${BUILDBASE}/android/lineage/out/target/product/$OUTPUTFILE/lineage-18.1-*-UNOFFICIAL-$OUTPUTFILE.zip | tail -1)
 
 ## Copy to output
 echo "Creating switchroot install dir..."
@@ -341,7 +294,7 @@ FULL_GAPPS_URL=$(echo $BASE_GAPPS_URL"?use_mirror=autoselect&ts="$TIMESTAMP)
 curl -L -o $BUILDBASE/android/output/opengapps_${TYPE}.zip $FULL_GAPPS_URL
 
 ## Patch zip file to accept any bootloader version
-OUTPUT_ZIP_FILE=$(ls -rt ${BUILDBASE}/android/output/lineage-17.1-*-UNOFFICIAL-${OUTPUTFILE}.zip | tail -1)
+OUTPUT_ZIP_FILE=$(ls -rt ${BUILDBASE}/android/output/lineage-18.1-*-UNOFFICIAL-${OUTPUTFILE}.zip | tail -1)
 
 mkdir -p ./META-INF/com/google/android/
 unzip -p $OUTPUT_ZIP_FILE META-INF/com/google/android/updater-script > ./META-INF/com/google/android/updater-script.original
