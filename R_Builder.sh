@@ -114,6 +114,7 @@ then
 	
 	# create directories and get repo
 	mkdir -p ~/bin
+	mkdir -p $BUILDBASE/android
 	mkdir -p $BUILDBASE/android/lineage
 
 	# check for missing case sensitivity (assume WSL) and fix if not
