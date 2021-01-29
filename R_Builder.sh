@@ -173,7 +173,7 @@ fi
 cd $BUILDBASE/android/lineage
 
 # ccache
-if [ NOCCACHE = false ];
+if [ NOCCACHE == false ];
 then
 	export USE_CCACHE=1
 	export CCACHE_EXEC="/usr/bin/ccache"
@@ -188,12 +188,12 @@ mkdir -p $BUILDBASE/android/lineage/out/target/product/$OUTPUTFILE/vendor/lib/mo
 source build/envsetup.sh
 
 # check rom type and assign gapps type and rom type
-if [ $FOSTERTYPE = "i" ];
+if [ $FOSTERTYPE == "i" ];
 then
 	TYPE="pico"
 	OUTPUTFILE="icosa"
 	lunch lineage_icosa-userdebug
-elif [ $FOSTERTYPE = "m" ];
+elif [ $FOSTERTYPE == "m" ];
 then
 	TYPE="pico"
 	OUTPUTFILE="foster_tab"
@@ -235,7 +235,7 @@ curl -L -o $BUILDBASE/android/output/switchroot/install/twrp.img https://github.
 echo "Downloading coreboot.rom..."
 
 # oc coreboot check
-if [ $MEMOC = "y" ];
+if [ $MEMOC == "y" ];
 then
 	curl -L -o $BUILDBASE/android/output/switchroot/android/coreboot.rom https://github.com/PabloZaiden/switchroot-android-build/raw/5591127dc4b9ef3ed1afb0bb677d05108705caa5/external/coreboot-oc.rom
 	zip -u $BUILDBASE/android/output/switchroot/android/coreboot.rom $OUTPUT_ZIP_FILE firmware-update/coreboot.rom
@@ -274,7 +274,7 @@ zip -u $OUTPUT_ZIP_FILE META-INF/com/google/android/updater-script
 rm -rf ./META-INF/com/google/android/
 
 # Magisk pre-rooting
-if [ $MAGISK = "y" ];
+if [ $MAGISK  == "y" ];
 then	
 	cd $BUILDBASE
 	
