@@ -161,11 +161,11 @@ then
 
 	# patches
 	
-	patch -d device/nvidia/foster -p1 <  .repo/local_manifests/patches/device_nvidia_foster-syspartition.patch
-	patch -d device/nvidia/foster -p1 <  .repo/local_manifests/patches/device_nvidia_foster-vendorinit-HACK.patch
-	patch -d device/nvidia/tegra-common -p1 <  .repo/local_manifests/patches/device_nvidia_tegra-common-nvphsd-HACK.patch
-	patch -d device/nvidia/tegra-common -p1 <  .repo/local_manifests/patches/device_nvidia_tegra-common-vendor-HACKS.patch
-	patch -d device/nvidia/touch -p1 <  .repo/local_manifests/patches/device_nvidia_touch-raydium-HACK.patch
+	git -C device/nvidia/foster apply .repo/local_manifests/patches/device_nvidia_foster-syspartition.patch
+	git -C device/nvidia/foster apply .repo/local_manifests/patches/device_nvidia_foster-vendorinit-HACK.patch
+	git -C device/nvidia/tegra-common apply .repo/local_manifests/patches/device_nvidia_tegra-common-vendor-HACKS.patch
+	git -C device/nvidia/tegra-common apply .repo/local_manifests/patches/device_nvidia_tegra-common-nvphsd-HACK.patch
+	git -C device/nvidia/touch apply .repo/local_manifests/patches/device_nvidia_touch-raydium-HACK.patch
 
 fi
 # reset back to lineage directory
