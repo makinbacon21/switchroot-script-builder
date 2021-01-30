@@ -163,9 +163,10 @@ then
 	# patches
 	
 	git -C device/nvidia/foster apply ../../../.repo/local_manifests/patches/device_nvidia_foster-HAX.patch
-	git -C device/nvidia/tegra-common apply ../../../.repo/local_manifests/patches/device_nvidia_tegra-common-vendor-HACKS.patch
-	git -C device/nvidia/tegra-common apply ../../../.repo/local_manifests/patches/device_nvidia_tegra-common-nvphsd-HACK.patch
-	git -C device/nvidia/touch apply ../../../.repo/local_manifests/patches/device_nvidia_touch-raydium-HACK.patch
+	git -C device/nvidia/tegra-common apply ../../../.repo/local_manifests/patches/device_nvidia_touch-raydium-HACK.patch
+	git -C device/nvidia/touch apply ../../../.repo/local_manifests/patches/device_nvidia_tegra-common-HAX.patch
+	git -C bionic apply ../.repo/local_manifests/patches/bionic_intrinsics.patch
+	git -C build/soong apply ../../.repo/local_manifests/patches/build_soong-build-HACK.patch
 
 
 fi
