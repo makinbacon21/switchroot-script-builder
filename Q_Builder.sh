@@ -127,6 +127,34 @@ then
 	git config --global user.name $GITNAME
 fi
 
+if [ -z $CLEAN ] && [ -d $BUILDBASE/android ] ; then
+	# restore backuped files
+    cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
+    if [ -f initfiles/power.icosa.rc.bak ] then
+    rm -Rf initfiles/power.icosa.rc
+    mv initfiles/power.icosa.rc.bak initfiles/power.icosa.rc
+    fi
+    cd $BUILDBASE/android/lineage/device/nvidia/foster
+    if [ -f drivers/clk/tegra/clk-dfll.c.bak ] then
+    rm -Rf drivers/clk/tegra/clk-dfll.c
+    mv drivers/clk/tegra/clk-dfll.c.bak drivers/clk/tegra/clk-dfll.c
+    fi
+    if [ -f drivers/clk/tegra/clk-tegra124-dfll-fcpu.c.bak ] then
+    rm -Rf drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+    mv drivers/clk/tegra/clk-tegra124-dfll-fcpu.c.bak drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+    fi
+    if [ -f drivers/soc/tegra/tegra210-dvfs.c.bak ] then
+    rm -Rf drivers/soc/tegra/tegra210-dvfs.c
+    mv drivers/soc/tegra/tegra210-dvfs.c.bak drivers/soc/tegra/tegra210-dvfs.c
+    fi
+    cd $BUILDBASE/android/lineage/hardware/nintendo/joycond
+    if [ -f android/Vendor_057e_Product_2008.kl.bak ] then
+    rm -Rf android/Vendor_057e_Product_2008.kl
+    mv android/Vendor_057e_Product_2008.kl.bak android/Vendor_057e_Product_2008.kl
+    fi
+    cd $BUILDBASE
+fi
+
 # clean build?
 if [ ! -z $CLEAN ];
 then
@@ -159,6 +187,7 @@ then
 	# check for missing case sensitivity (assume WSL) and fix if not
 	if [ -d ~/Bin ];
 	then
+		WSL=true
 		cd $CWD
 		powershell.exe -File "./wsl_cs.ps1" -Buildbase "$BUILDBASE"
 	fi
@@ -182,6 +211,40 @@ then
 	git clone https://gitlab.com/switchroot/android/manifest.git -b lineage-17.1 local_manifests
 	repo sync --force-sync -j${JOBS}
 
+	# backup some files before custom patch applied for later use
+	if [ $CPUOC = "y" ];
+	then
+		cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
+		cp initfiles/power.icosa.rc initfiles/power.icosa.rc.bak
+		cd $BUILDBASE/android/lineage/device/nvidia/foster
+		cp drivers/clk/tegra/clk-dfll.c drivers/clk/tegra/clk-dfll.c.bak
+		cp drivers/clk/tegra/clk-tegra124-dfll-fcpu.c drivers/clk/tegra/clk-tegra124-dfll-fcpu.c.bak
+		cp drivers/soc/tegra/tegra210-dvfs.c drivers/soc/tegra/tegra210-dvfs.c.bak
+		cd $BUILDBASE
+	fi
+	if [ $JCPATCH = "y" ];
+	then
+		cd $BUILDBASE/android/lineage/hardware/nintendo/joycond
+		cp android/Vendor_057e_Product_2008.kl android/Vendor_057e_Product_2008.kl.bak
+		cd $BUILDBASE
+	fi
+
+	# cpu oc patch
+	if [ $CPUOC = "y" ];
+	then
+		cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
+		patch -p1 < $CWD/patches/oc-android10.patch
+		cd $BUILDBASE/android/lineage/device/nvidia/foster
+		patch -p1 < $CWD/patches/oc_profiles.patch
+	fi
+
+	# joycon patch
+	if [ $JCPATCH = "y" ];
+	then
+		cd $BUILDBASE/android/lineage/hardware/nintendo/joycond
+		patch -p1 < $CWD/patches/joycond10.patch
+	fi
+	
 elif [ -z $NOSYNC ];
 then
 	cd $BUILDBASE/android/lineage
@@ -229,6 +292,24 @@ then
 	# atv resolution patch
 	cd $BUILDBASE/android/lineage/device/lineage/atv
 	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/device_lineage_atv-res.patch
+
+	# backup some files before custom patch applied for later use
+	if [ $CPUOC = "y" ];
+	then
+		cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
+		cp initfiles/power.icosa.rc initfiles/power.icosa.rc.bak
+		cd $BUILDBASE/android/lineage/device/nvidia/foster
+		cp drivers/clk/tegra/clk-dfll.c drivers/clk/tegra/clk-dfll.c.bak
+		cp drivers/clk/tegra/clk-tegra124-dfll-fcpu.c drivers/clk/tegra/clk-tegra124-dfll-fcpu.c.bak
+		cp drivers/soc/tegra/tegra210-dvfs.c drivers/soc/tegra/tegra210-dvfs.c.bak
+		cd $BUILDBASE
+	fi
+	if [ $JCPATCH = "y" ];
+	then
+		cd $BUILDBASE/android/lineage/hardware/nintendo/joycond
+		cp android/Vendor_057e_Product_2008.kl android/Vendor_057e_Product_2008.kl.bak
+		cd $BUILDBASE
+	fi
 
 	# cpu oc patch
 	if [ $CPUOC = "y" ];
@@ -383,4 +464,9 @@ then
 	# zip patched boot.img into lineage zip
 	cd $BUILDBASE/android/output/switchroot/install/
 	zip -u $OUTPUT_ZIP_FILE boot.img
+fi
+
+if [ ! -z $WSL ] ; then
+mv $BUILDBASE/android/output $CWD
+wget -P $CWD/output https://github.com/topjohnwu/magisk_files/raw/canary/app-debug.apk
 fi
