@@ -109,6 +109,26 @@ while true; do
     esac
 done
 
+# download gapps?
+while true; do
+    read -p "Do ya want download gapps (y/n)?" yn
+    case $yn in
+        [Yy]* ) GAPPS=y; break;;
+        [Nn]* ) GAPPS=n; break;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
+# download hekate?
+while true; do
+    read -p "Do ya want download hekate and android profile (y/n)?" yn
+    case $yn in
+        [Yy]* ) HEKATE=y; break;;
+        [Nn]* ) HEKATE=n; break;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
 # prompt for root and install necessary packages
 sudo apt update
 sudo apt install bc bison build-essential ccache curl flex g++-multilib gcc-multilib git gnupg gperf 
@@ -376,12 +396,17 @@ echo "Creating switchroot install dir..."
 mkdir -p $BUILDBASE/android/output/switchroot/install
 echo "Creating switchroot android dir..."
 mkdir -p $BUILDBASE/android/output/switchroot/android
-echo "Downloading hekate..."
-LATEST_HEKATE=$(curl -sL https://github.com/CTCaer/hekate/releases/latest | grep -o '/CTCaer/hekate/releases/download/.*/hekate_ctcaer.*zip')
-curl -L -o ./hekate.zip https://github.com/$LATEST_HEKATE
-unzip -u ./hekate.zip -d $BUILDBASE/android/output/
-echo "Creating bootloader config dir..."
-mkdir -p $BUILDBASE/android/output/bootloader/ini
+
+if [ $HEKATE = "y" ];
+	then
+	echo "Downloading hekate..."
+	LATEST_HEKATE=$(curl -sL https://github.com/CTCaer/hekate/releases/latest | grep -o '/CTCaer/hekate/releases/download/.*/hekate_ctcaer.*zip')
+	curl -L -o ./hekate.zip https://github.com/$LATEST_HEKATE
+	unzip -u ./hekate.zip -d $BUILDBASE/android/output/
+	echo "Creating bootloader config dir..."
+	mkdir -p $BUILDBASE/android/output/bootloader/ini
+fi
+
 echo "Copying build zip to SD Card..."
 cp $ZIP_FILE $BUILDBASE/android/output/
 echo "Copying build combined kernel and ramdisk..."
@@ -401,25 +426,33 @@ else
 	curl -L -o $BUILDBASE/android/output/switchroot/android/coreboot.rom https://github.com/PabloZaiden/switchroot-android-build/raw/5591127dc4b9ef3ed1afb0bb677d05108705caa5/external/coreboot.rom
 fi
 
-echo "Downloading 00-android.ini..."
-curl -L -o $BUILDBASE/android/output/bootloader/ini/00-android.ini https://gitlab.com/ZachyCatGames/shitty-pie-guide/-/raw/master/res/00-android.ini?inline=false
+if [ $HEKATE = "y" ];
+	then
+	echo "Downloading 00-android.ini..."
+	curl -L -o $BUILDBASE/android/output/bootloader/ini/00-android.ini https://gitlab.com/ZachyCatGames/shitty-pie-guide/-/raw/master/res/00-android.ini?inline=false
+fi
+
 echo "Downloading boot scripts..."
 curl -L -o $BUILDBASE/android/output/switchroot/android/common.scr https://gitlab.com/switchroot/bootstack/switch-uboot-scripts/-/jobs/artifacts/master/raw/common.scr?job=build
 curl -L -o $BUILDBASE/android/output/switchroot/android/boot.scr https://gitlab.com/switchroot/bootstack/switch-uboot-scripts/-/jobs/artifacts/master/raw/sd.scr?job=build
-echo "Downloading Pico Open GApps..."
 
-# get base URL for pico gapps	
-BASE_GAPPS_URL=$(curl -L https://sourceforge.net/projects/opengapps/rss?path=/arm64 \
-		| grep -Po "https:\/\/.*10\.0-${TYPE}.*zip\/download" \
-		| head -n 1 \
-		| sed "s/\/download//" \
-		| sed "s/files\///" \
-		| sed "s/projects/project/" \
-		| sed "s/sourceforge/downloads\.sourceforge/")
+if if [ $GAPPS = "y" ];
+	then
+	echo "Downloading Pico Open GApps..."
 
-TIMESTAMP=$(echo $(( $(date '+%s%N') / 1000000000)))
-FULL_GAPPS_URL=$(echo $BASE_GAPPS_URL"?use_mirror=autoselect&ts="$TIMESTAMP)
-curl -L -o $BUILDBASE/android/output/opengapps_${TYPE}.zip $FULL_GAPPS_URL
+	# get base URL for pico gapps	
+	BASE_GAPPS_URL=$(curl -L https://sourceforge.net/projects/opengapps/rss?path=/arm64 \
+			| grep -Po "https:\/\/.*10\.0-${TYPE}.*zip\/download" \
+			| head -n 1 \
+			| sed "s/\/download//" \
+			| sed "s/files\///" \
+			| sed "s/projects/project/" \
+			| sed "s/sourceforge/downloads\.sourceforge/")
+
+	TIMESTAMP=$(echo $(( $(date '+%s%N') / 1000000000)))
+	FULL_GAPPS_URL=$(echo $BASE_GAPPS_URL"?use_mirror=autoselect&ts="$TIMESTAMP)
+	curl -L -o $BUILDBASE/android/output/opengapps_${TYPE}.zip $FULL_GAPPS_URL
+fi
 
 ## Patch zip file to accept any bootloader version
 OUTPUT_ZIP_FILE=$(ls -rt ${BUILDBASE}/android/output/lineage-17.1-*-UNOFFICIAL-${OUTPUTFILE}.zip | tail -1)
@@ -467,6 +500,5 @@ then
 fi
 
 if [ ! -z $WSL ] ; then
-mv $BUILDBASE/android/output $CWD
-wget -P $CWD/output https://github.com/topjohnwu/magisk_files/raw/canary/app-debug.apk
+	mv $BUILDBASE/android/output $CWD
 fi
