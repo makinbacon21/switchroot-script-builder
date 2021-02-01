@@ -130,11 +130,6 @@ fi
 if [ -z $CLEAN ] && [ -d $BUILDBASE/android ] ; then
 	# restore backuped files
     cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
-    if [ -f initfiles/power.icosa.rc.bak ] ; then
-    rm -Rf initfiles/power.icosa.rc
-    mv ./initfiles/power.icosa.rc.bak ./initfiles/power.icosa.rc
-    fi
-    cd $BUILDBASE/android/lineage/device/nvidia/foster
     if [ -f drivers/clk/tegra/clk-dfll.c.bak ] ; then
     rm -Rf drivers/clk/tegra/clk-dfll.c
     mv ./drivers/clk/tegra/clk-dfll.c.bak ./drivers/clk/tegra/clk-dfll.c
@@ -146,6 +141,11 @@ if [ -z $CLEAN ] && [ -d $BUILDBASE/android ] ; then
     if [ -f drivers/soc/tegra/tegra210-dvfs.c.bak ] ; then
     rm -Rf drivers/soc/tegra/tegra210-dvfs.c
     mv ./drivers/soc/tegra/tegra210-dvfs.c.bak ./drivers/soc/tegra/tegra210-dvfs.c
+    fi
+    cd $BUILDBASE/android/lineage/device/nvidia/foster
+    if [ -f initfiles/power.icosa.rc.bak ] ; then
+    rm -Rf initfiles/power.icosa.rc
+    mv ./initfiles/power.icosa.rc.bak ./initfiles/power.icosa.rc
     fi
     cd $BUILDBASE/android/lineage/hardware/nintendo/joycond
     if [ -f android/Vendor_057e_Product_2008.kl.bak ] ; then
@@ -215,11 +215,11 @@ then
 	if [ $CPUOC = "y" ];
 	then
 		cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
-		cp initfiles/power.icosa.rc initfiles/power.icosa.rc.bak
-		cd $BUILDBASE/android/lineage/device/nvidia/foster
 		cp drivers/clk/tegra/clk-dfll.c drivers/clk/tegra/clk-dfll.c.bak
 		cp drivers/clk/tegra/clk-tegra124-dfll-fcpu.c drivers/clk/tegra/clk-tegra124-dfll-fcpu.c.bak
 		cp drivers/soc/tegra/tegra210-dvfs.c drivers/soc/tegra/tegra210-dvfs.c.bak
+		cd $BUILDBASE/android/lineage/device/nvidia/foster
+		cp initfiles/power.icosa.rc initfiles/power.icosa.rc.bak
 		cd $BUILDBASE
 	fi
 	if [ $JCPATCH = "y" ];
@@ -297,11 +297,11 @@ then
 	if [ $CPUOC = "y" ];
 	then
 		cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
-		cp initfiles/power.icosa.rc initfiles/power.icosa.rc.bak
-		cd $BUILDBASE/android/lineage/device/nvidia/foster
 		cp drivers/clk/tegra/clk-dfll.c drivers/clk/tegra/clk-dfll.c.bak
 		cp drivers/clk/tegra/clk-tegra124-dfll-fcpu.c drivers/clk/tegra/clk-tegra124-dfll-fcpu.c.bak
 		cp drivers/soc/tegra/tegra210-dvfs.c drivers/soc/tegra/tegra210-dvfs.c.bak
+		cd $BUILDBASE/android/lineage/device/nvidia/foster
+		cp initfiles/power.icosa.rc initfiles/power.icosa.rc.bak
 		cd $BUILDBASE
 	fi
 	if [ $JCPATCH = "y" ];
