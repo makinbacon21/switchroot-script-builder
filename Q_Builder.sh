@@ -65,14 +65,14 @@ do
     fi
 done
 
-# backup files based on patch file. usage e.g.) backup_original joycond10.patch
+# backup files based on patch file. usage e.g.) backup_original /location/to/patch/patchname.patch
 backup_original() {
 	for UNPATCHEDFILES in $(cat $1 | grep -o -P '(?<=diff --git a/).*(?= b/)') ; do
     	cp $UNPATCHEDFILES $UNPATCHEDFILES.bak
 	done
 }
 
-# restore backuped files based on patch file. usage e.g.) restore_original joycond10.patch
+# restore backuped files based on patch file. usage e.g.) restore_original /location/to/patch/patchname.patch
 restore_original() {
 	for PATCHEDFILES in $(cat $1 | grep -o -P '(?<=diff --git a/).*(?= b/)') ; do
     	[ -f $(echo $PATCHEDFILES).bak ] && rm -Rf $PATCHEDFILES && mv $PATCHEDFILES.bak $PATCHEDFILES
@@ -211,13 +211,13 @@ fi
 if [ -z $CLEAN ] && [ -d $BUILDBASE/android ] ; then
 	# restore backuped files
     cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
-	restore_original oc-android10.patch
+	restore_original $CWD/patches/oc-android10.patch
 
     cd $BUILDBASE/android/lineage/device/nvidia/foster
-	restore_original oc_profiles.patch
+	restore_original $CWD/patches/oc_profiles.patch
 
     cd $BUILDBASE/android/lineage/hardware/nintendo/joycond
-	restore_original joycond10.patch
+	restore_original $CWD/patches/joycond10.patch
 
     cd $BUILDBASE
 fi
