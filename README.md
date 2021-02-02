@@ -37,6 +37,7 @@ Syntax: `./Q_Builder.sh [-v | --verbose] [-n | --nosync] [-c | --clean]`
 - `-v | --verbose`: Enables verbose mode (`set -x`) for debugging
 - `-n | --nosync`: Runs build without `git reset` or `repo sync` (keeps source tree from last build intact)
 - `-c | --clean`: Forces clean build (removes source tree and builds from scratch)
+- `-u | --update`: Sets up the build for a dirty flash by preventing the download of twrp.img, and all files in switchroot/android folder
 - `-e | --noccache`: Disables CCache for building (NOT RECOMMENDED--MOSTLY FOR TESTING PURPOSES)
 - `-h | --help`: Long-winded help message
 
