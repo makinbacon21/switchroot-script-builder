@@ -34,11 +34,6 @@ do
     	if ["$arg" == "--update"] || ["$arg" == "-u"];
     then
     	echo "Update mode enabled."
-		if [$CLEAN]
-		then
-			echo "Clean and Update modes are incompatible..assuming Update."
-			CLEAN=false
-		fi
 		UPDATE=true
     fi
 	if [ "$arg" == "--noccache" ] || [ "$arg" == "-e" ];
