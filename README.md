@@ -16,7 +16,7 @@ OC patch (CPU)
 
 Joycon patch (snapshot button takes screenshots)
 
-GApps download
+GApps and Hekate download
 
 Option to preroot with magisk
 
