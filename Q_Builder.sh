@@ -2,10 +2,6 @@
 
 # get current working directory
 CWD=$(pwd)
-if [ -z "$BUILDBASE" ];
-then
-	BUILDBASE=~
-fi
 
 # arguments
 for arg in "$@"
@@ -31,7 +27,7 @@ do
 		fi
 		CLEAN=true
     fi
-    	if ["$arg" == "--update"] || ["$arg" == "-u"];
+    	if [ "$arg" == "--update" ] || [ "$arg" == "-u" ];
     then
     	echo "Update mode enabled."
 		UPDATE=true
@@ -51,13 +47,17 @@ do
 		printf -- "-c | --clean\t\tForces a clean build--deletes BUILDBASE/android and redownloads sources\n"
 		printf -- "-u | --update\t\tForces an update build--only keeps the boot.img, DTB file, and LineageOS flashable zip\n"
 		printf -- "-e | --noccache\t\tNOT RECOMMENDED--disables using CCache for building, which reduces storage consumption but can have unintended consequences\n\n"
-		printf "MORE INFO:\n\nExport the BUILDBASE environment variable as the directory you want to build in\nEXAMPLE: export BUILDBASE=/home/tmakin\n"
-		printf "WSL2 users should note that NTFS sucks and ext4 is recommended, and mounting an external NTFS drive is supported in newer Insider Dev Channel builds\nFor more info, see https://docs.microsoft.com/en-us/windows/wsl/wsl2-mount-disk\n\n"
+		printf "MORE INFO:\n\nWSL2 users should note that NTFS sucks and ext4 is recommended, and mounting an external NTFS drive is supported in newer Insider Dev Channel builds\nFor more info, see https://docs.microsoft.com/en-us/windows/wsl/wsl2-mount-disk\n\n"
 		
 		# force exit on fail
 		exit -1
     fi
 done
+
+if [ -z "$BUILDBASE" ];
+then
+	read -p "Enter the parent folder where the android folder is in: " BUILDBASE
+fi
 
 cd $BUILDBASE
 
