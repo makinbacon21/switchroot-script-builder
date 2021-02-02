@@ -16,7 +16,7 @@ OC patch (CPU)
 
 Joycon patch (snapshot button takes screenshots)
 
-GApps download
+GApps and Hekate download
 
 Option to preroot with magisk
 
@@ -37,13 +37,14 @@ Syntax: `./Q_Builder.sh [-v | --verbose] [-n | --nosync] [-c | --clean]`
 - `-v | --verbose`: Enables verbose mode (`set -x`) for debugging
 - `-n | --nosync`: Runs build without `git reset` or `repo sync` (keeps source tree from last build intact)
 - `-c | --clean`: Forces clean build (removes source tree and builds from scratch)
+- `-u | --update`: Sets up the build for a dirty flash by preventing the download of twrp.img, and all files in switchroot/android folder
 - `-e | --noccache`: Disables CCache for building (NOT RECOMMENDED--MOSTLY FOR TESTING PURPOSES)
 - `-h | --help`: Long-winded help message
 
 First `chmod +x Q_Builder.sh` to make it executable, thne run the script with `./Q_Builder.sh` and any arguments, and answer any prompts you get. Once stuff starts happening, there shouldn't be any more prompts unless you screwed something up
 
 # Credits
-@Dajokeisonu for his direct contributions
+@Dajokeisonu, @someone5678, and @EmreTech for their direct contributions
 
 @PabloZaiden for his work on the Dockerized build and the disgusting URL magic that has been performed to get GApps to work properly
 

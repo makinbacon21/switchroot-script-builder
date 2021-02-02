@@ -30,10 +30,10 @@ do
 			NOSYNC=false
 		fi
 		CLEAN=true
-    fi
-	if [ "$arg" == "--update" ] || [ "$arg" == "-u" ];
-	then
-		echo "Update mode enabled."
+  fi
+  if [ "$arg" == "--update" ] || [ "$arg" == "-u" ];
+    then
+    	echo "Update mode enabled."
 		UPDATE=true
     fi
 	if [ "$arg" == "--noccache" ] || [ "$arg" == "-e" ];
@@ -44,7 +44,7 @@ do
 	if [ "$arg" == "--help" ] || [ "$arg" == "-h" ];
     then
 		# long-winded help message
-        printf "\nWelcome to Switchroot Script Builder!\nThe current version of Switchroot Android is Q (10), based on LineageOS 17.1.\n\n"
+    printf "\nWelcome to Switchroot Script Builder!\nThe current version of Switchroot Android is Q (10), based on LineageOS 17.1.\n\n"
 		printf "USAGE: ./Q_Builder.sh [-v | --verbose] [-n | --nosync] [-c | --clean] [-e | --noccache] [-h | --help]\n"
 		printf -- "-v | --verbose\t\tActivates verbose mode\n"
 		printf -- "-n | --nosync\t\tDisables repo syncing and git cleaning and just forces a direct rebuild\n"
@@ -356,6 +356,7 @@ ZIP_FILE=$(ls -rt ${BUILDBASE}/android/lineage/out/target/product/$OUTPUTFILE/li
 ## Copy to output
 echo "Creating switchroot install dir..."
 mkdir -p $BUILDBASE/android/output/switchroot/install
+
 if [ -z $UPDATE ]; then
 	echo "Creating switchroot android dir..."
 	mkdir -p $BUILDBASE/android/output/switchroot/android
@@ -379,6 +380,7 @@ echo "Copying build combined kernel and ramdisk..."
 cp $BUILDBASE/android/lineage/out/target/product/$OUTPUTFILE/boot.img $BUILDBASE/android/output/switchroot/install/
 echo "Copying build dtb..."
 cp $BUILDBASE/android/lineage/out/target/product/$OUTPUTFILE/obj/KERNEL_OBJ/arch/arm64/boot/dts/tegra210-icosa.dtb $BUILDBASE/android/output/switchroot/install/
+
 if [ -z $UPDATE ]; then
 	echo "Downloading twrp..."
 	curl -L -o $BUILDBASE/android/output/switchroot/install/twrp.img https://github.com/PabloZaiden/switchroot-android-build/raw/master/external/twrp.img
@@ -392,8 +394,6 @@ if [ -z $UPDATE ]; then
 		curl -L -o $BUILDBASE/android/output/switchroot/android/coreboot.rom https://github.com/PabloZaiden/switchroot-android-build/raw/5591127dc4b9ef3ed1afb0bb677d05108705caa5/external/coreboot.rom
 	fi
 fi
-
-
 
 if [ $UPDATE = "false" ]; then
 	echo "Downloading boot scripts..."
