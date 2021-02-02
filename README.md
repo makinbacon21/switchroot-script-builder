@@ -32,7 +32,7 @@ Decent CPU (better CPU --> faster build)
 Unpatched Erista-codenamed Nintendo Switch (https://ismyswitchpatched.com/) with RCM jig to trigger exploit
 
 # Building
-Syntax: `./Q_Builder.sh [-v | --verbose] [-n | --nosync] [-c | --clean]`
+Syntax: `./Q_Builder.sh [-v | --verbose] [-n | --nosync] [-c | --clean] [-u | --update]`
 
 - `-v | --verbose`: Enables verbose mode (`set -x`) for debugging
 - `-n | --nosync`: Runs build without `git reset` or `repo sync` (keeps source tree from last build intact)
