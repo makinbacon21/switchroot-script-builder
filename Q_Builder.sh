@@ -27,7 +27,7 @@ do
 		fi
 		CLEAN=true
     fi
-    	if [ "$arg" == "--update" ] || [ "$arg" == "-u" ];
+    if [ "$arg" == "--update" ] || [ "$arg" == "-u" ];
     then
     	echo "Update mode enabled."
 		UPDATE=true
