@@ -44,7 +44,7 @@ Syntax: `./Q_Builder.sh [-v | --verbose] [-n | --nosync] [-c | --clean]`
 First `chmod +x Q_Builder.sh` to make it executable, thne run the script with `./Q_Builder.sh` and any arguments, and answer any prompts you get. Once stuff starts happening, there shouldn't be any more prompts unless you screwed something up
 
 # Credits
-@Dajokeisonu for his direct contributions
+@Dajokeisonu, @someone5678, and @EmreTech for their direct contributions
 
 @PabloZaiden for his work on the Dockerized build and the disgusting URL magic that has been performed to get GApps to work properly
 
