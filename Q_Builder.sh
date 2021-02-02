@@ -30,8 +30,8 @@ do
 			NOSYNC=false
 		fi
 		CLEAN=true
-    fi
-    	if ["$arg" == "--update"] || ["$arg" == "-u"];
+  fi
+  if [ "$arg" == "--update" ] || [ "$arg" == "-u" ];
     then
     	echo "Update mode enabled."
 		UPDATE=true
@@ -44,7 +44,7 @@ do
 	if [ "$arg" == "--help" ] || [ "$arg" == "-h" ];
     then
 		# long-winded help message
-        printf "\nWelcome to Switchroot Script Builder!\nThe current version of Switchroot Android is Q (10), based on LineageOS 17.1.\n\n"
+    printf "\nWelcome to Switchroot Script Builder!\nThe current version of Switchroot Android is Q (10), based on LineageOS 17.1.\n\n"
 		printf "USAGE: ./Q_Builder.sh [-v | --verbose] [-n | --nosync] [-c | --clean] [-e | --noccache] [-h | --help]\n"
 		printf -- "-v | --verbose\t\tActivates verbose mode\n"
 		printf -- "-n | --nosync\t\tDisables repo syncing and git cleaning and just forces a direct rebuild\n"
@@ -105,16 +105,6 @@ while true; do
     esac
 done
 
-# root?
-while true; do
-    read -p "Do ya want your device rooted (patch for Magisk) (y/n)?" yn
-    case $yn in
-        [Yy]* ) MAGISK=y; break;;
-        [Nn]* ) MAGISK=n; break;;
-        * ) echo "Please answer y or n.";;
-    esac
-done
-
 # download gapps?
 while true; do
     read -p "Do ya want to download OpenGApps (y/n)?" yn
@@ -131,6 +121,16 @@ while true; do
     case $yn in
         [Yy]* ) HEKATE=y; break;;
         [Nn]* ) HEKATE=n; break;;
+        * ) echo "Please answer y or n.";;
+    esac
+done
+
+# root?
+while true; do
+    read -p "Do ya want your device rooted (patch for Magisk) (y/n)?" yn
+    case $yn in
+        [Yy]* ) MAGISK=y; break;;
+        [Nn]* ) MAGISK=n; break;;
         * ) echo "Please answer y or n.";;
     esac
 done
@@ -356,7 +356,8 @@ ZIP_FILE=$(ls -rt ${BUILDBASE}/android/lineage/out/target/product/$OUTPUTFILE/li
 ## Copy to output
 echo "Creating switchroot install dir..."
 mkdir -p $BUILDBASE/android/output/switchroot/install
-if [-z $UPDATE]; then
+
+if [ -z $UPDATE ]; then
 	echo "Creating switchroot android dir..."
 	mkdir -p $BUILDBASE/android/output/switchroot/android
 fi
@@ -379,7 +380,8 @@ echo "Copying build combined kernel and ramdisk..."
 cp $BUILDBASE/android/lineage/out/target/product/$OUTPUTFILE/boot.img $BUILDBASE/android/output/switchroot/install/
 echo "Copying build dtb..."
 cp $BUILDBASE/android/lineage/out/target/product/$OUTPUTFILE/obj/KERNEL_OBJ/arch/arm64/boot/dts/tegra210-icosa.dtb $BUILDBASE/android/output/switchroot/install/
-if [-z $UPDATE]; then
+
+if [ -z $UPDATE ]; then
 	echo "Downloading twrp..."
 	curl -L -o $BUILDBASE/android/output/switchroot/install/twrp.img https://github.com/PabloZaiden/switchroot-android-build/raw/master/external/twrp.img
 	echo "Downloading coreboot.rom..."
@@ -393,9 +395,7 @@ if [-z $UPDATE]; then
 	fi
 fi
 
-
-
-if [$UPDATE = false]; then
+if [ $UPDATE = "false" ]; then
 	echo "Downloading boot scripts..."
 	curl -L -o $BUILDBASE/android/output/switchroot/android/common.scr https://gitlab.com/switchroot/bootstack/switch-uboot-scripts/-/jobs/artifacts/master/raw/common.scr?job=build
 	curl -L -o $BUILDBASE/android/output/switchroot/android/boot.scr https://gitlab.com/switchroot/bootstack/switch-uboot-scripts/-/jobs/artifacts/master/raw/sd.scr?job=build
@@ -464,6 +464,6 @@ then
 	zip -u $OUTPUT_ZIP_FILE boot.img
 fi
 
-if [ ! -z $WSL ] ; then
+if [ ! -z $WSL ]; then
 	mv $BUILDBASE/android/output $CWD
 fi
