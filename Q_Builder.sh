@@ -7,6 +7,12 @@ then
 	BUILDBASE=~
 fi
 
+# detect WSL
+if [ -d /run/WSL ];
+then
+	WSL=true
+fi
+
 # arguments
 for arg in "$@"
 do
@@ -30,8 +36,8 @@ do
 			NOSYNC=false
 		fi
 		CLEAN=true
-  fi
-  if [ "$arg" == "--update" ] || [ "$arg" == "-u" ];
+  	fi
+  	if [ "$arg" == "--update" ] || [ "$arg" == "-u" ];
     then
     	echo "Update mode enabled."
 		UPDATE=true
@@ -44,7 +50,7 @@ do
 	if [ "$arg" == "--help" ] || [ "$arg" == "-h" ];
     then
 		# long-winded help message
-    printf "\nWelcome to Switchroot Script Builder!\nThe current version of Switchroot Android is Q (10), based on LineageOS 17.1.\n\n"
+    	printf "\nWelcome to Switchroot Script Builder!\nThe current version of Switchroot Android is Q (10), based on LineageOS 17.1.\n\n"
 		printf "USAGE: ./Q_Builder.sh [-v | --verbose] [-n | --nosync] [-c | --clean] [-e | --noccache] [-h | --help]\n"
 		printf -- "-v | --verbose\t\tActivates verbose mode\n"
 		printf -- "-n | --nosync\t\tDisables repo syncing and git cleaning and just forces a direct rebuild\n"
@@ -58,6 +64,55 @@ do
 		exit -1
     fi
 done
+
+# backup files based on patch file. usage e.g.) backup_original joycond10.patch
+backup_original() {
+	for UNPATCHEDFILES in $(cat $1 | grep -o -P '(?<=diff --git a/).*(?= b/)') ; do
+    	cp $UNPATCHEDFILES $UNPATCHEDFILES.bak
+	done
+}
+
+# restore backuped files based on patch file. usage e.g.) restore_original joycond10.patch
+restore_original() {
+	for PATCHEDFILES in $(cat $1 | grep -o -P '(?<=diff --git a/).*(?= b/)') ; do
+    	[ -f $(echo $PATCHEDFILES).bak ] && rm -Rf $PATCHEDFILES && mv $PATCHEDFILES.bak $PATCHEDFILES
+	done
+}
+
+# applying custom patch usage e.g.) apply_custom_patch
+apply_custom_patch() {
+	# joycon patch
+	if [ $JCPATCH = "y" ];
+	then
+		# backup
+		echo "backup oiriginal file"
+		cd $BUILDBASE/android/lineage/hardware/nintendo/joycond
+		backup_original $CWD/patches/joycond10.patch
+
+		# patch
+		echo "apply joycon patch"
+		cd $BUILDBASE/android/lineage/hardware/nintendo/joycond
+		patch -p1 < $CWD/patches/joycond10.patch
+	fi
+
+	# cpu oc patch
+	if [ $CPUOC = "y" ];
+	then
+		# backup
+		echo "backup original files"
+		cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
+		backup_original $CWD/patches/oc-android10.patch
+		cd $BUILDBASE/android/lineage/device/nvidia/foster
+		backup_original $CWD/patches/oc_profiles.patch
+
+		# patch
+		echo "apply oc patches"
+		cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
+		patch -p1 < $CWD/patches/oc-android10.patch
+		cd $BUILDBASE/android/lineage/device/nvidia/foster
+		patch -p1 < $CWD/patches/oc_profiles.patch
+	fi
+}
 
 cd $BUILDBASE
 
@@ -156,28 +211,14 @@ fi
 if [ -z $CLEAN ] && [ -d $BUILDBASE/android ] ; then
 	# restore backuped files
     cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
-    if [ -f drivers/clk/tegra/clk-dfll.c.bak ] ; then
-    rm -Rf drivers/clk/tegra/clk-dfll.c
-    mv ./drivers/clk/tegra/clk-dfll.c.bak ./drivers/clk/tegra/clk-dfll.c
-    fi
-    if [ -f drivers/clk/tegra/clk-tegra124-dfll-fcpu.c.bak ] ; then
-    rm -Rf drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-    mv ./drivers/clk/tegra/clk-tegra124-dfll-fcpu.c.bak ./drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-    fi
-    if [ -f drivers/soc/tegra/tegra210-dvfs.c.bak ] ; then
-    rm -Rf drivers/soc/tegra/tegra210-dvfs.c
-    mv ./drivers/soc/tegra/tegra210-dvfs.c.bak ./drivers/soc/tegra/tegra210-dvfs.c
-    fi
+	restore_original oc-android10.patch
+
     cd $BUILDBASE/android/lineage/device/nvidia/foster
-    if [ -f initfiles/power.icosa.rc.bak ] ; then
-    rm -Rf initfiles/power.icosa.rc
-    mv ./initfiles/power.icosa.rc.bak ./initfiles/power.icosa.rc
-    fi
+	restore_original oc_profiles.patch
+
     cd $BUILDBASE/android/lineage/hardware/nintendo/joycond
-    if [ -f android/Vendor_057e_Product_2008.kl.bak ] ; then
-    rm -Rf android/Vendor_057e_Product_2008.kl
-    mv ./android/Vendor_057e_Product_2008.kl.bak ./android/Vendor_057e_Product_2008.kl
-    fi
+	restore_original joycond10.patch
+
     cd $BUILDBASE
 fi
 
@@ -212,9 +253,8 @@ then
 	mkdir -p $BUILDBASE/android/lineage
 
 	# check for missing case sensitivity (assume WSL) and fix if not
-	if [ -d ~/Bin ];
+	if [ ! -z $WSL ];
 	then
-		WSL=true
 		cd $CWD
 		powershell.exe -File "./wsl_cs.ps1" -Buildbase "$BUILDBASE"
 	fi
@@ -238,6 +278,9 @@ then
 	git clone https://gitlab.com/switchroot/android/manifest.git -b lineage-17.1 local_manifests
 	repo sync --force-sync -j${JOBS}
 
+	# applying custom patch
+	apply_custom_patch
+
 # check if syncing
 elif [ -z $NOSYNC ];
 then
@@ -248,6 +291,9 @@ then
 	git pull
 	cd $BUILDBASE/android/lineage
 	repo sync --force-sync -j${JOBS}
+
+	# applying custom patch
+	apply_custom_patch
 fi
 
 if [ ! -z $NOSYNC ];
@@ -290,23 +336,8 @@ then
 	cd $BUILDBASE/android/lineage/device/lineage/atv
 	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/device_lineage_atv-res.patch
 
-	# cpu oc patch
-	if [ $CPUOC = "y" ];
-	then
-		# backup
-		cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
-		cp drivers/clk/tegra/clk-dfll.c drivers/clk/tegra/clk-dfll.c.bak
-		cp drivers/clk/tegra/clk-tegra124-dfll-fcpu.c drivers/clk/tegra/clk-tegra124-dfll-fcpu.c.bak
-		cp drivers/soc/tegra/tegra210-dvfs.c drivers/soc/tegra/tegra210-dvfs.c.bak
-		cd $BUILDBASE/android/lineage/device/nvidia/foster
-		cp initfiles/power.icosa.rc initfiles/power.icosa.rc.bak
-
-		# patch
-		cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
-		patch -p1 < $CWD/patches/oc-android10.patch
-		cd $BUILDBASE/android/lineage/device/nvidia/foster
-		patch -p1 < $CWD/patches/oc_profiles.patch
-	fi
+	# applying custom patch
+	apply_custom_patch
 fi
 
 # reset back to lineage directory
