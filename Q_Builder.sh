@@ -31,6 +31,11 @@ do
 		fi
 		CLEAN=true
     fi
+	if [ "$arg" == "--update" ] || [ "$arg" == "-u" ];
+	then
+		echo "Update mode enabled."
+		UPDATE=true
+    fi
 	if [ "$arg" == "--noccache" ] || [ "$arg" == "-e" ];
     then
         echo "CCache disabled."
@@ -44,6 +49,7 @@ do
 		printf -- "-v | --verbose\t\tActivates verbose mode\n"
 		printf -- "-n | --nosync\t\tDisables repo syncing and git cleaning and just forces a direct rebuild\n"
 		printf -- "-c | --clean\t\tForces a clean build--deletes BUILDBASE/android and redownloads sources\n"
+		printf -- "-u | --update\t\tForces an update build--only keeps the boot.img, DTB file, and LineageOS flashable zip\n"
 		printf -- "-e | --noccache\t\tNOT RECOMMENDED--disables using CCache for building, which reduces storage consumption but can have unintended consequences\n\n"
 		printf "MORE INFO:\n\nExport the BUILDBASE environment variable as the directory you want to build in\nEXAMPLE: export BUILDBASE=/home/tmakin\n"
 		printf "WSL2 users should note that NTFS sucks and ext4 is recommended, and mounting an external NTFS drive is supported in newer Insider Dev Channel builds\nFor more info, see https://docs.microsoft.com/en-us/windows/wsl/wsl2-mount-disk\n\n"
@@ -99,16 +105,6 @@ while true; do
     esac
 done
 
-# root?
-while true; do
-    read -p "Do ya want your device rooted (patch for Magisk) (y/n)?" yn
-    case $yn in
-        [Yy]* ) MAGISK=y; break;;
-        [Nn]* ) MAGISK=n; break;;
-        * ) echo "Please answer y or n.";;
-    esac
-done
-
 # download gapps?
 while true; do
     read -p "Do ya want to download OpenGApps (y/n)?" yn
@@ -125,6 +121,16 @@ while true; do
     case $yn in
         [Yy]* ) HEKATE=y; break;;
         [Nn]* ) HEKATE=n; break;;
+        * ) echo "Please answer y or n.";;
+    esac
+done
+
+# root?
+while true; do
+    read -p "Do ya want your device rooted (patch for Magisk) (y/n)?" yn
+    case $yn in
+        [Yy]* ) MAGISK=y; break;;
+        [Nn]* ) MAGISK=n; break;;
         * ) echo "Please answer y or n.";;
     esac
 done
@@ -350,8 +356,10 @@ ZIP_FILE=$(ls -rt ${BUILDBASE}/android/lineage/out/target/product/$OUTPUTFILE/li
 ## Copy to output
 echo "Creating switchroot install dir..."
 mkdir -p $BUILDBASE/android/output/switchroot/install
-echo "Creating switchroot android dir..."
-mkdir -p $BUILDBASE/android/output/switchroot/android
+if [ -z $UPDATE ]; then
+	echo "Creating switchroot android dir..."
+	mkdir -p $BUILDBASE/android/output/switchroot/android
+fi
 
 if [ $HEKATE = "y" ];
 	then
@@ -371,22 +379,27 @@ echo "Copying build combined kernel and ramdisk..."
 cp $BUILDBASE/android/lineage/out/target/product/$OUTPUTFILE/boot.img $BUILDBASE/android/output/switchroot/install/
 echo "Copying build dtb..."
 cp $BUILDBASE/android/lineage/out/target/product/$OUTPUTFILE/obj/KERNEL_OBJ/arch/arm64/boot/dts/tegra210-icosa.dtb $BUILDBASE/android/output/switchroot/install/
-echo "Downloading twrp..."
-curl -L -o $BUILDBASE/android/output/switchroot/install/twrp.img https://github.com/PabloZaiden/switchroot-android-build/raw/master/external/twrp.img
-echo "Downloading coreboot.rom..."
-
-# oc coreboot check
-if [ $MEMOC = "y" ];
-then
-	curl -L -o $BUILDBASE/android/output/switchroot/android/coreboot.rom https://github.com/PabloZaiden/switchroot-android-build/raw/5591127dc4b9ef3ed1afb0bb677d05108705caa5/external/coreboot-oc.rom
-	zip -u $BUILDBASE/android/output/switchroot/android/coreboot.rom $OUTPUT_ZIP_FILE firmware-update/coreboot.rom
-else
-	curl -L -o $BUILDBASE/android/output/switchroot/android/coreboot.rom https://github.com/PabloZaiden/switchroot-android-build/raw/5591127dc4b9ef3ed1afb0bb677d05108705caa5/external/coreboot.rom
+if [ -z $UPDATE ]; then
+	echo "Downloading twrp..."
+	curl -L -o $BUILDBASE/android/output/switchroot/install/twrp.img https://github.com/PabloZaiden/switchroot-android-build/raw/master/external/twrp.img
+	echo "Downloading coreboot.rom..."
+	# oc coreboot check
+	if [ $MEMOC = "y" ];
+	then
+		curl -L -o $BUILDBASE/android/output/switchroot/android/coreboot.rom https://github.com/PabloZaiden/switchroot-android-build/raw/5591127dc4b9ef3ed1afb0bb677d05108705caa5/external/coreboot-oc.rom
+		zip -u $BUILDBASE/android/output/switchroot/android/coreboot.rom $OUTPUT_ZIP_FILE firmware-update/coreboot.rom
+	else
+		curl -L -o $BUILDBASE/android/output/switchroot/android/coreboot.rom https://github.com/PabloZaiden/switchroot-android-build/raw/5591127dc4b9ef3ed1afb0bb677d05108705caa5/external/coreboot.rom
+	fi
 fi
 
-echo "Downloading boot scripts..."
-curl -L -o $BUILDBASE/android/output/switchroot/android/common.scr https://gitlab.com/switchroot/bootstack/switch-uboot-scripts/-/jobs/artifacts/master/raw/common.scr?job=build
-curl -L -o $BUILDBASE/android/output/switchroot/android/boot.scr https://gitlab.com/switchroot/bootstack/switch-uboot-scripts/-/jobs/artifacts/master/raw/sd.scr?job=build
+
+
+if [ $UPDATE = "false" ]; then
+	echo "Downloading boot scripts..."
+	curl -L -o $BUILDBASE/android/output/switchroot/android/common.scr https://gitlab.com/switchroot/bootstack/switch-uboot-scripts/-/jobs/artifacts/master/raw/common.scr?job=build
+	curl -L -o $BUILDBASE/android/output/switchroot/android/boot.scr https://gitlab.com/switchroot/bootstack/switch-uboot-scripts/-/jobs/artifacts/master/raw/sd.scr?job=build
+fi
 
 if [ $GAPPS = "y" ];
 then
@@ -451,6 +464,6 @@ then
 	zip -u $OUTPUT_ZIP_FILE boot.img
 fi
 
-if [ ! -z $WSL ] ; then
+if [ ! -z $WSL ]; then
 	mv $BUILDBASE/android/output $CWD
 fi
