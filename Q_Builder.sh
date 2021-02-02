@@ -388,16 +388,17 @@ if [$UPDATE = false]; then
 	echo "Downloading twrp..."
 	curl -L -o $BUILDBASE/android/output/switchroot/install/twrp.img https://github.com/PabloZaiden/switchroot-android-build/raw/master/external/twrp.img
 	echo "Downloading coreboot.rom..."
+	# oc coreboot check
+	if [ $MEMOC = "y" ];
+	then
+		curl -L -o $BUILDBASE/android/output/switchroot/android/coreboot.rom https://github.com/PabloZaiden/switchroot-android-build/raw/5591127dc4b9ef3ed1afb0bb677d05108705caa5/external/coreboot-oc.rom
+		zip -u $BUILDBASE/android/output/switchroot/android/coreboot.rom $OUTPUT_ZIP_FILE firmware-update/coreboot.rom
+	else
+		curl -L -o $BUILDBASE/android/output/switchroot/android/coreboot.rom https://github.com/PabloZaiden/switchroot-android-build/raw/5591127dc4b9ef3ed1afb0bb677d05108705caa5/external/coreboot.rom
+	fi
 fi
 
-# oc coreboot check
-if [ $MEMOC = "y" ];
-then
-	curl -L -o $BUILDBASE/android/output/switchroot/android/coreboot.rom https://github.com/PabloZaiden/switchroot-android-build/raw/5591127dc4b9ef3ed1afb0bb677d05108705caa5/external/coreboot-oc.rom
-	zip -u $BUILDBASE/android/output/switchroot/android/coreboot.rom $OUTPUT_ZIP_FILE firmware-update/coreboot.rom
-else
-	curl -L -o $BUILDBASE/android/output/switchroot/android/coreboot.rom https://github.com/PabloZaiden/switchroot-android-build/raw/5591127dc4b9ef3ed1afb0bb677d05108705caa5/external/coreboot.rom
-fi
+
 
 if [$UPDATE = false]; then
 	echo "Downloading boot scripts..."
