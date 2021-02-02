@@ -65,7 +65,7 @@ while true; do
         [Ii]* ) FOSTERTYPE=i; break;;
         [Mm]* ) FOSTERTYPE=m; break;;
         [Tt]* ) FOSTERTYPE=t; break;;
-        * ) echo "Please answer yes or no.";;
+        * ) echo "Please answer y or n.";;
     esac
 done
 
@@ -75,7 +75,7 @@ while true; do
     case $yn in
         [Yy]* ) MEMOC=y; break;;
         [Nn]* ) MEMOC=n; break;;
-        * ) echo "Please answer yes or no.";;
+        * ) echo "Please answer y or n.";;
     esac
 done
 
@@ -85,7 +85,7 @@ while true; do
     case $yn in
         [Yy]* ) CPUOC=y; break;;
         [Nn]* ) CPUOC=n; break;;
-        * ) echo "Please answer yes or no.";;
+        * ) echo "Please answer y or n.";;
     esac
 done
 
@@ -95,7 +95,7 @@ while true; do
     case $yn in
         [Yy]* ) JCPATCH=y; break;;
         [Nn]* ) JCPATCH=n; break;;
-        * ) echo "Please answer yes or no.";;
+        * ) echo "Please answer y or n.";;
     esac
 done
 
@@ -105,27 +105,27 @@ while true; do
     case $yn in
         [Yy]* ) MAGISK=y; break;;
         [Nn]* ) MAGISK=n; break;;
-        * ) echo "Please answer yes or no.";;
+        * ) echo "Please answer y or n.";;
     esac
 done
 
 # download gapps?
 while true; do
-    read -p "Do ya want download gapps (y/n)?" yn
+    read -p "Do ya want to download OpenGApps (y/n)?" yn
     case $yn in
         [Yy]* ) GAPPS=y; break;;
         [Nn]* ) GAPPS=n; break;;
-        * ) echo "Please answer yes or no.";;
+        * ) echo "Please answer y or n.";;
     esac
 done
 
 # download hekate?
 while true; do
-    read -p "Do ya want download hekate and android profile (y/n)?" yn
+    read -p "Do ya want download and set up hekate (y/n)?" yn
     case $yn in
         [Yy]* ) HEKATE=y; break;;
         [Nn]* ) HEKATE=n; break;;
-        * ) echo "Please answer yes or no.";;
+        * ) echo "Please answer y or n.";;
     esac
 done
 
@@ -182,6 +182,7 @@ then
 	rm -rf $BUILDBASE/android
 fi
 
+# check for android
 if [ ! -d $BUILDBASE/android ]; 
 then
 	# clean, download, and unzip latest platform tools
@@ -231,40 +232,7 @@ then
 	git clone https://gitlab.com/switchroot/android/manifest.git -b lineage-17.1 local_manifests
 	repo sync --force-sync -j${JOBS}
 
-	# backup some files before custom patch applied for later use
-	if [ $CPUOC = "y" ];
-	then
-		cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
-		cp drivers/clk/tegra/clk-dfll.c drivers/clk/tegra/clk-dfll.c.bak
-		cp drivers/clk/tegra/clk-tegra124-dfll-fcpu.c drivers/clk/tegra/clk-tegra124-dfll-fcpu.c.bak
-		cp drivers/soc/tegra/tegra210-dvfs.c drivers/soc/tegra/tegra210-dvfs.c.bak
-		cd $BUILDBASE/android/lineage/device/nvidia/foster
-		cp initfiles/power.icosa.rc initfiles/power.icosa.rc.bak
-		cd $BUILDBASE
-	fi
-	if [ $JCPATCH = "y" ];
-	then
-		cd $BUILDBASE/android/lineage/hardware/nintendo/joycond
-		cp android/Vendor_057e_Product_2008.kl android/Vendor_057e_Product_2008.kl.bak
-		cd $BUILDBASE
-	fi
-
-	# cpu oc patch
-	if [ $CPUOC = "y" ];
-	then
-		cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
-		patch -p1 < $CWD/patches/oc-android10.patch
-		cd $BUILDBASE/android/lineage/device/nvidia/foster
-		patch -p1 < $CWD/patches/oc_profiles.patch
-	fi
-
-	# joycon patch
-	if [ $JCPATCH = "y" ];
-	then
-		cd $BUILDBASE/android/lineage/hardware/nintendo/joycond
-		patch -p1 < $CWD/patches/joycond10.patch
-	fi
-	
+# check if syncing
 elif [ -z $NOSYNC ];
 then
 	cd $BUILDBASE/android/lineage
@@ -274,7 +242,10 @@ then
 	git pull
 	cd $BUILDBASE/android/lineage
 	repo sync --force-sync -j${JOBS}
+fi
 
+if [ ! -z $NOSYNC ];
+then
 	# update stuff (used for clean too but kinda unnecessary)
 	cd $BUILDBASE/android/lineage
 	source build/envsetup.sh
@@ -313,45 +284,30 @@ then
 	cd $BUILDBASE/android/lineage/device/lineage/atv
 	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/device_lineage_atv-res.patch
 
-	# backup some files before custom patch applied for later use
+	# cpu oc patch
 	if [ $CPUOC = "y" ];
 	then
+		# backup
 		cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
 		cp drivers/clk/tegra/clk-dfll.c drivers/clk/tegra/clk-dfll.c.bak
 		cp drivers/clk/tegra/clk-tegra124-dfll-fcpu.c drivers/clk/tegra/clk-tegra124-dfll-fcpu.c.bak
 		cp drivers/soc/tegra/tegra210-dvfs.c drivers/soc/tegra/tegra210-dvfs.c.bak
 		cd $BUILDBASE/android/lineage/device/nvidia/foster
 		cp initfiles/power.icosa.rc initfiles/power.icosa.rc.bak
-		cd $BUILDBASE
-	fi
-	if [ $JCPATCH = "y" ];
-	then
-		cd $BUILDBASE/android/lineage/hardware/nintendo/joycond
-		cp android/Vendor_057e_Product_2008.kl android/Vendor_057e_Product_2008.kl.bak
-		cd $BUILDBASE
-	fi
 
-	# cpu oc patch
-	if [ $CPUOC = "y" ];
-	then
+		# patch
 		cd $BUILDBASE/android/lineage/kernel/nvidia/linux-4.9/kernel/kernel-4.9
 		patch -p1 < $CWD/patches/oc-android10.patch
 		cd $BUILDBASE/android/lineage/device/nvidia/foster
 		patch -p1 < $CWD/patches/oc_profiles.patch
 	fi
-
-	# joycon patch
-	if [ $JCPATCH = "y" ];
-	then
-		cd $BUILDBASE/android/lineage/hardware/nintendo/joycond
-		patch -p1 < $CWD/patches/joycond10.patch
-	fi
 fi
+
 # reset back to lineage directory
 cd $BUILDBASE/android/lineage
 
 # ccache
-if [ NOCCACHE = false ];
+if [ -z $NOCCACHE ];
 then
 	export USE_CCACHE=1
 	export CCACHE_EXEC="/usr/bin/ccache"
@@ -405,6 +361,8 @@ if [ $HEKATE = "y" ];
 	unzip -u ./hekate.zip -d $BUILDBASE/android/output/
 	echo "Creating bootloader config dir..."
 	mkdir -p $BUILDBASE/android/output/bootloader/ini
+	echo "Downloading 00-android.ini..."
+	curl -L -o $BUILDBASE/android/output/bootloader/ini/00-android.ini https://gitlab.com/ZachyCatGames/shitty-pie-guide/-/raw/master/res/00-android.ini?inline=false
 fi
 
 echo "Copying build zip to SD Card..."
@@ -426,18 +384,12 @@ else
 	curl -L -o $BUILDBASE/android/output/switchroot/android/coreboot.rom https://github.com/PabloZaiden/switchroot-android-build/raw/5591127dc4b9ef3ed1afb0bb677d05108705caa5/external/coreboot.rom
 fi
 
-if [ $HEKATE = "y" ];
-	then
-	echo "Downloading 00-android.ini..."
-	curl -L -o $BUILDBASE/android/output/bootloader/ini/00-android.ini https://gitlab.com/ZachyCatGames/shitty-pie-guide/-/raw/master/res/00-android.ini?inline=false
-fi
-
 echo "Downloading boot scripts..."
 curl -L -o $BUILDBASE/android/output/switchroot/android/common.scr https://gitlab.com/switchroot/bootstack/switch-uboot-scripts/-/jobs/artifacts/master/raw/common.scr?job=build
 curl -L -o $BUILDBASE/android/output/switchroot/android/boot.scr https://gitlab.com/switchroot/bootstack/switch-uboot-scripts/-/jobs/artifacts/master/raw/sd.scr?job=build
 
-if if [ $GAPPS = "y" ];
-	then
+if [ $GAPPS = "y" ];
+then
 	echo "Downloading Pico Open GApps..."
 
 	# get base URL for pico gapps	
