@@ -7,6 +7,9 @@ then
 	BUILDBASE=~
 fi
 
+# get json object
+PATCHJSON=$(curl -s https://raw.githubusercontent.com/makinbacon21/resources/main/script-builder/patchdefs.json)
+
 # detect WSL
 if [ -d /run/WSL ];
 then
@@ -79,34 +82,45 @@ restore_original() {
 	done
 }
 
-# apply patches based on json in repo
-apply_patches() {
-    PATCHJSON=$(curl -s https://raw.githubusercontent.com/makinbacon21/resources/main/script-builder/patchdefs.json)
-    
-    for key in $(jq -r '.patches[]' $PATCHJSON | jq -r 'keys[]'); do
+# apply optional patches based on json in repo
+apply_optional_patches() {    
+    for key in $(jq -r '.optional-patches[]' $PATCHJSON | jq -r 'keys[]'); do
 
-        PS3="Do you want to apply $key patch (y|n) ?:"
+        PS3="Do you want to apply $key patch? (y|n):"
         select answer in yes no; do
 
             if [[ $answer == "yes" ]]; then
-                # Store patch location (local or https)
-                PATCH=$(jq -r '.patches[].'$key'[].patch' $PATCHJSON)
+				for subkey in $(jq -r '.optional-patches[].'$key'[]' $PATCHJSON | jq -r 'keys[]'); do
+					# Store patch location (local or https)
+					PATCH=$(jq -r '.optional-patches[].'$key'[].'$subkey'.patch' $PATCHJSON)
 
-                # Go to patch directory
-                cd "$BUILDBASE/android/lineage/$(jq -r '.patches[].'$key'[].path' $PATCHJSON)"
+					# Go to patch directory
+					cd "$BUILDBASE/android/lineage/$(jq -r '.optional-patches[].'$key'[].'$subkey'.path' $PATCHJSON)"
 
-                # If patch begins with https then curl the patch otherwise apply
-                if [[ "${PATCH}" =~ "^https.*" ]]; then
-                    curl -s ${PATCH} | patch -p1
-                else
-                    patch -p1 < $BUILDBASE/android/lineage/${PATCH}
-                fi
+					# If patch begins with https then curl the patch otherwise apply
+					if [[ "${PATCH}" =~ "^https.*" ]]; then
+						curl -s ${PATCH} | patch -p1
+					else
+						patch -p1 < $BUILDBASE/android/lineage/${PATCH}
+					fi
+				done
             else
-                echo -e "\nYou choosed not to apply $key patch !"
+                echo -e "\nYou chose not to apply $key patch!"
                 break
             fi
         done
     done
+}
+
+# apply required patches based on json in repo
+apply_required_patches() {
+	for key in $(jq -r '.required-patches[]' $PATCHJSON | jq -r 'keys[]'); do
+		# Store patch location (local or https)
+		PATCH=$(jq -r '.required-patches[].'$key'.patch' $PATCHJSON)
+
+		# Go to patch directory
+		cd "$BUILDBASE/android/lineage/$(jq -r '.required-patches[].'$key'.path' $PATCHJSON)"
+	done
 }
 
 cd $BUILDBASE
