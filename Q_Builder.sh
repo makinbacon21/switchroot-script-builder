@@ -379,7 +379,7 @@ echo "Copying build combined kernel and ramdisk..."
 cp $BUILDBASE/android/lineage/out/target/product/$OUTPUTFILE/boot.img $BUILDBASE/android/output/switchroot/install/
 echo "Copying build dtb..."
 cp $BUILDBASE/android/lineage/out/target/product/$OUTPUTFILE/obj/KERNEL_OBJ/arch/arm64/boot/dts/tegra210-icosa.dtb $BUILDBASE/android/output/switchroot/install/
-if [-z $UPDATE]; then
+if [ -z $UPDATE ]; then
 	echo "Downloading twrp..."
 	curl -L -o $BUILDBASE/android/output/switchroot/install/twrp.img https://github.com/PabloZaiden/switchroot-android-build/raw/master/external/twrp.img
 	echo "Downloading coreboot.rom..."
@@ -395,7 +395,7 @@ fi
 
 
 
-if [$UPDATE = false]; then
+if [ -z $UPDATE ]; then
 	echo "Downloading boot scripts..."
 	curl -L -o $BUILDBASE/android/output/switchroot/android/common.scr https://gitlab.com/switchroot/bootstack/switch-uboot-scripts/-/jobs/artifacts/master/raw/common.scr?job=build
 	curl -L -o $BUILDBASE/android/output/switchroot/android/boot.scr https://gitlab.com/switchroot/bootstack/switch-uboot-scripts/-/jobs/artifacts/master/raw/sd.scr?job=build
