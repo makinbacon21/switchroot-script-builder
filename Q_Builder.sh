@@ -54,6 +54,47 @@ do
     fi
 done
 
+# backup files based on patch file. usage e.g.) backup_original /location/to/patch/patchname.patch
+backup_original() {
+	for UNPATCHEDFILES in $(cat $1 | grep -o -P '(?<=diff --git a/).*(?= b/)') ; do
+    	cp $UNPATCHEDFILES $UNPATCHEDFILES.bak
+	done
+}
+
+# restore backuped files based on patch file. usage e.g.) restore_original /location/to/patch/patchname.patch
+restore_original() {
+	for PATCHEDFILES in $(cat $1 | grep -o -P '(?<=diff --git a/).*(?= b/)') ; do
+    	[ -f $(echo $PATCHEDFILES).bak ] && rm -Rf $PATCHEDFILES && mv $PATCHEDFILES.bak $PATCHEDFILES
+	done
+}
+
+# apply patches based on json in repo
+apply_patches() {
+	PATCHJSON=$(curl -s https://raw.githubusercontent.com/makinbacon21/resources/main/script-builder/patchdefs.json)
+	PATCHNUM=$(( $(echo $PATCHJSON | jq '.patches[].patch' | wc -l) - 1 ))
+	for number in `seq 0 $PATCHNUM`
+	do
+		cd $BUILDBASE/android/lineage
+		cd $(echo $PATCHJSON | jq ".patches[$number].path")
+		VAR=$(echo $PATCHJSON | jq ".patches[$number].var")
+		PATCH=$(echo $PATCHJSON | jq ".patches[$number].patch")
+		PATCH="${PATCH##\"}"
+		PATCH="${PATCH%%\"}"
+		PATCHDIR=$PATCH
+		if [[ $PATCH == *"https"* ]];
+		then
+			PATCHDIR="${PATCH##*patches\/}"
+			rm -f $PATCHDIR
+			wget $PATCH
+			if [[ VAR != "\"\"" ]];
+			then
+				${$VAR}
+			fi
+		fi
+		patch -p1 $PATCHDIR
+	done
+}
+
 if [ -z "$BUILDBASE" ];
 then
 	read -p "Enter the parent folder where the android folder is in: " BUILDBASE
