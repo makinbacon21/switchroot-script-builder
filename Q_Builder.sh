@@ -83,43 +83,57 @@ restore_original() {
 }
 
 # apply optional patches based on json in repo
-apply_optional_patches() {    
-    for key in $(jq -r '.optional-patches[]' $PATCHJSON | jq -r 'keys[]'); do
+apply_patches() {
+ 	for key in $(jq -r '.patches[]' $PATCHJSON | jq -r 'keys[]'); do
 
-        PS3="Do you want to apply $key patch? (y|n):"
-        select answer in yes no; do
+		# Create a nested function that will be reused multiple time during main function
+		do_patching() {
 
-            if [[ $answer == "yes" ]]; then
-				for subkey in $(jq -r '.optional-patches[].'$key'[]' $PATCHJSON | jq -r 'keys[]'); do
-					# Store patch location (local or https)
-					PATCH=$(jq -r '.optional-patches[].'$key'[].'$subkey'.patch' $PATCHJSON)
+			# Create a counter to avoid exceeding array length
+			PATCH_COUNT=0
 
-					# Go to patch directory
-					cd "$BUILDBASE/android/lineage/$(jq -r '.optional-patches[].'$key'[].'$subkey'.path' $PATCHJSON)"
+			# Iterate over patches
+			for PATCH in ${PATCHES[@]}; do
 
-					# If patch begins with https then curl the patch otherwise apply
-					if [[ "${PATCH}" =~ "^https.*" ]]; then
-						curl -s ${PATCH} | patch -p1
-					else
-						patch -p1 < $BUILDBASE/android/lineage/${PATCH}
-					fi
-				done
-            else
-                echo -e "\nYou chose not to apply $key patch!"
-                break
-            fi
-        done
-    done
-}
+				# Go to patch directory
+				cd "$BUILDBASE/android/lineage/$(jq -r '.patches[].'$key'['$PATCH_COUNT'].path' $PATCHJSON)"
 
-# apply required patches based on json in repo
-apply_required_patches() {
-	for key in $(jq -r '.required-patches[]' $PATCHJSON | jq -r 'keys[]'); do
-		# Store patch location (local or https)
-		PATCH=$(jq -r '.required-patches[].'$key'.patch' $PATCHJSON)
+				# Increment counter
+				PATCH_COUNT=$((PATCH_COUNT++))
 
-		# Go to patch directory
-		cd "$BUILDBASE/android/lineage/$(jq -r '.required-patches[].'$key'.path' $PATCHJSON)"
+				# If patch begins with https then curl the patch otherwise apply
+				if [[ "${PATCH}" =~ "^https.*" ]]; then
+					curl -s ${PATCH} | patch -p1
+				else
+					patch -p1 < $BUILDBASE/android/lineage/${PATCH}
+				fi
+			done
+		}
+
+		# Create our prompt
+		PS3="Do you want to apply the $key patch (y|n)? :"
+
+		# Check if patch is required then prompt to apply
+		if [[ $key == "required"  ]]; then
+			# Store patches into an array
+			PATCHES=($((jq -r '.patches[].'$key'[].patch | @sh' $PATCHJSON) | tr -d \'\"))
+
+			select answer in yes no; do
+				do_patching
+				break
+			done
+		fi
+
+		select answer in yes no; do
+			if [[ $answer == "yes" ]]; then
+				# Store patches into an array
+				PATCHES=($((jq -r '.patches[].'$key'[].patch | @sh' $PATCHJSON) | tr -d \'\")) # Store patches into an array
+				do_patching
+			else
+				echo -e "\nYou choosed not to apply $key patch !"
+			fi
+			break
+		done
 	done
 }
 
