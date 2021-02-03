@@ -81,29 +81,32 @@ restore_original() {
 
 # apply patches based on json in repo
 apply_patches() {
-	PATCHJSON=$(curl -s https://raw.githubusercontent.com/makinbacon21/resources/main/script-builder/patchdefs.json)
-	PATCHNUM=$(( $(echo $PATCHJSON | jq '.patches[].patch' | wc -l) - 1 ))
-	for number in `seq 0 $PATCHNUM`
-	do
-		cd $BUILDBASE/android/lineage
-		cd $(echo $PATCHJSON | jq ".patches[$number].path")
-		VAR=$(echo $PATCHJSON | jq ".patches[$number].var")
-		PATCH=$(echo $PATCHJSON | jq ".patches[$number].patch")
-		PATCH="${PATCH##\"}"
-		PATCH="${PATCH%%\"}"
-		PATCHDIR=$PATCH
-		if [[ $PATCH == *"https"* ]];
-		then
-			PATCHDIR="${PATCH##*patches\/}"
-			rm -f $PATCHDIR
-			wget $PATCH
-			if [[ VAR != "\"\"" ]];
-			then
-				${$VAR}
-			fi
-		fi
-		patch -p1 $PATCHDIR
-	done
+    PATCHJSON=$(curl -s https://raw.githubusercontent.com/makinbacon21/resources/main/script-builder/patchdefs.json)
+    
+    for key in $(jq -r '.patches[]' $PATCHJSON | jq -r 'keys[]'); do
+
+        PS3="Do you want to apply $key patch (y|n) ?:"
+        select answer in yes no; do
+
+            if [[ $answer == "yes" ]]; then
+                # Store patch location (local or https)
+                PATCH=$(jq -r '.patches[].'$key'[].patch' $PATCHJSON)
+
+                # Go to patch directory
+                cd "$BUILDBASE/android/lineage/$(jq -r '.patches[].'$key'[].path' $PATCHJSON)"
+
+                # If patch begins with https then curl the patch otherwise apply
+                if [[ "${PATCH}" =~ "^https.*" ]]; then
+                    curl -s ${PATCH} | patch -p1
+                else
+                    patch -p1 < $BUILDBASE/android/lineage/${PATCH}
+                fi
+            else
+                echo -e "\nYou choosed not to apply $key patch !"
+                break
+            fi
+        done
+    done
 }
 
 cd $BUILDBASE
@@ -118,36 +121,6 @@ while true; do
         [Ii]* ) FOSTERTYPE=i; break;;
         [Mm]* ) FOSTERTYPE=m; break;;
         [Tt]* ) FOSTERTYPE=t; break;;
-        * ) echo "Please answer y or n.";;
-    esac
-done
-
-# oc coreboot?
-while true; do
-    read -p "Do ya want an 1862 MHz memory OC (y/n)?" yn
-    case $yn in
-        [Yy]* ) MEMOC=y; break;;
-        [Nn]* ) MEMOC=n; break;;
-        * ) echo "Please answer y or n.";;
-    esac
-done
-
-# oc patch?
-while true; do
-    read -p "Do ya want a 2091 MHz CPU OC (y/n)?" yn
-    case $yn in
-        [Yy]* ) CPUOC=y; break;;
-        [Nn]* ) CPUOC=n; break;;
-        * ) echo "Please answer y or n.";;
-    esac
-done
-
-# joycon-swap?
-while true; do
-    read -p "Do ya want the screenshot button patch (y/n)?" yn
-    case $yn in
-        [Yy]* ) JCPATCH=y; break;;
-        [Nn]* ) JCPATCH=n; break;;
         * ) echo "Please answer y or n.";;
     esac
 done
