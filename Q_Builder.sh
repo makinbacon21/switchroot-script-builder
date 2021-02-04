@@ -257,8 +257,8 @@ then
 	git clone https://gitlab.com/switchroot/android/manifest.git -b lineage-17.1 local_manifests
 	repo sync --force-sync -j${JOBS}
 
-	# applying custom patch
-	apply_custom_patch
+	# repopick and apply patches
+	apply_patches
 
 # check if syncing
 elif [ -z $NOSYNC ];
@@ -283,52 +283,8 @@ then
 
     cd $BUILDBASE
 
-	# applying patches
+	# repopick and apply patches
 	apply_patches
-fi
-
-if [ ! -z $NOSYNC ];
-then
-	# update stuff (used for clean too but kinda unnecessary)
-	cd $BUILDBASE/android/lineage
-	source build/envsetup.sh
-
-	# repopicks
-	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t icosa-bt-lineage-17.1
-	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-shieldtech-q
-	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-beyonder-q
-	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 300860
-	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 287339
-	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 302339
-	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 302554
-	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 284553
-
-	# bionic intrinsics patch
-	cd $BUILDBASE/android/lineage/bionic
-	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/bionic_intrinsics.patch
-
-	# beyonder fix patch
-	cd $BUILDBASE/android/lineage/device/nvidia/foster_tab
-	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/device_nvidia_foster_tab-beyonder.patch
-
-	# mouse patch
-	cd $BUILDBASE/android/lineage/frameworks/native
-	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/frameworks_native-mouse.patch
-
-	# desktop dock patch
-	cd $BUILDBASE/android/lineage/frameworks/base
-	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/frameworks_base-desktop-dock.patch
-
-	# gatekeeper hack patch
-	cd $BUILDBASE/android/lineage/system/core
-	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/system_core-gatekeeper-hack.patch
-
-	# atv resolution patch
-	cd $BUILDBASE/android/lineage/device/lineage/atv
-	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/device_lineage_atv-res.patch
-
-	# applying custom patch
-	apply_custom_patch
 fi
 
 # reset back to lineage directory
