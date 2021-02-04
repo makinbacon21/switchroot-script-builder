@@ -84,31 +84,31 @@ restore_original() {
 
 # apply optional patches based on json in repo
 apply_patches() {
+	# Create a nested function that will be reused multiple time during main function
+	do_patching() {
+
+		# Create a counter to avoid exceeding array length
+		PATCH_COUNT=0
+
+		# Iterate over patches
+		for PATCH in ${PATCHES[@]}; do
+
+			# Go to patch directory
+			cd "$BUILDBASE/android/lineage/$(jq -r '.patches[].'$key'['$PATCH_COUNT'].path' $PATCHJSON)"
+
+			# Increment counter
+			PATCH_COUNT=$((PATCH_COUNT++))
+
+			# If patch begins with https then curl the patch otherwise apply
+			if [[ "${PATCH}" =~ "^https.*" ]]; then
+				curl -s ${PATCH} | patch -p1
+			else
+				patch -p1 < $BUILDBASE/android/lineage/${PATCH}
+			fi
+		done
+	}
+
  	for key in $(jq -r '.patches[]' $PATCHJSON | jq -r 'keys[]'); do
-
-		# Create a nested function that will be reused multiple time during main function
-		do_patching() {
-
-			# Create a counter to avoid exceeding array length
-			PATCH_COUNT=0
-
-			# Iterate over patches
-			for PATCH in ${PATCHES[@]}; do
-
-				# Go to patch directory
-				cd "$BUILDBASE/android/lineage/$(jq -r '.patches[].'$key'['$PATCH_COUNT'].path' $PATCHJSON)"
-
-				# Increment counter
-				PATCH_COUNT=$((PATCH_COUNT++))
-
-				# If patch begins with https then curl the patch otherwise apply
-				if [[ "${PATCH}" =~ "^https.*" ]]; then
-					curl -s ${PATCH} | patch -p1
-				else
-					patch -p1 < $BUILDBASE/android/lineage/${PATCH}
-				fi
-			done
-		}
 
 		# Create our prompt
 		PS3="Do you want to apply the $key patch (y|n)? :"
