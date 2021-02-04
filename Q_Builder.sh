@@ -7,6 +7,9 @@ then
 	BUILDBASE=~
 fi
 
+# get json object
+PATCHJSON=$(curl -s https://raw.githubusercontent.com/makinbacon21/resources/main/script-builder/patchdefs.json)
+
 # detect WSL
 if [ -d /run/WSL ];
 then
@@ -79,30 +82,66 @@ restore_original() {
 	done
 }
 
-# apply patches based on json in repo
+# apply optional patches based on json in repo
 apply_patches() {
-	PATCHJSON=$(curl -s https://raw.githubusercontent.com/makinbacon21/resources/main/script-builder/patchdefs.json)
-	PATCHNUM=$(( $(echo $PATCHJSON | jq '.patches[].patch' | wc -l) - 1 ))
-	for number in `seq 0 $PATCHNUM`
-	do
-		cd $BUILDBASE/android/lineage
-		cd $(echo $PATCHJSON | jq ".patches[$number].path")
-		VAR=$(echo $PATCHJSON | jq ".patches[$number].var")
-		PATCH=$(echo $PATCHJSON | jq ".patches[$number].patch")
-		PATCH="${PATCH##\"}"
-		PATCH="${PATCH%%\"}"
-		PATCHDIR=$PATCH
-		if [[ $PATCH == *"https"* ]];
-		then
-			PATCHDIR="${PATCH##*patches\/}"
-			rm -f $PATCHDIR
-			wget $PATCH
-			if [[ VAR != "\"\"" ]];
-			then
-				${$VAR}
+	# Create a nested function that will be reused multiple time during main function
+	do_patching() {
+
+		# Create a counter to avoid exceeding array length
+		PATCH_COUNT=0
+
+		# Iterate over patches
+		for PATCH in ${PATCHES[@]}; do
+
+			# Go to patch directory
+			cd "$BUILDBASE/android/lineage/$(jq -r '.patches[].'$key'['$PATCH_COUNT'].path' $PATCHJSON)"
+
+			# Increment counter
+			PATCH_COUNT=$((PATCH_COUNT++))
+
+			# If patch begins with https then curl the patch otherwise apply
+			if [[ "${PATCH}" =~ "^https.*" ]]; then
+				curl -s ${PATCH} | patch -p1
+			else
+				patch -p1 < $BUILDBASE/android/lineage/${PATCH}
 			fi
+		done
+	}
+
+ 	for key in $(jq -r '.patches[]' $PATCHJSON | jq -r 'keys[]'); do
+
+		# Create our prompt
+		PS3="Do you want to apply the $key patch (y|n)? :"
+
+		select answer in yes no; do
+			if [[ $answer == "yes" ]]; then
+				# Store patches into an array
+				PATCHES=($((jq -r '.patches[].'$key'[].patch | @sh' $PATCHJSON) | tr -d \'\")) # Store patches into an array
+				do_patching
+			else
+				echo -e "\nYou chose not to apply $key patch !"
+			fi
+			break
+		done
+	done
+}
+
+# repopick commits based on json in repo
+repopick_commits() {
+
+	# Create a counter to keep track of picks
+	PICK_COUNT=0
+
+	# Iterate over patches
+	for key in $(jq -r '.repopicks[]' $PATCHJSON | jq -r 'keys[]'); do
+
+		# Increment counter
+		if [[ $(jq -r '.repopicks[PICK_COUNT].isNamed | @sh' $PATCHJSON) == "\"y\"" ]]; then
+			${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t ${key}
+		else
+			${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py ${key}
 		fi
-		patch -p1 $PATCHDIR
+		PICK_COUNT=$((PICK_COUNT++))
 	done
 }
 
@@ -118,36 +157,6 @@ while true; do
         [Ii]* ) FOSTERTYPE=i; break;;
         [Mm]* ) FOSTERTYPE=m; break;;
         [Tt]* ) FOSTERTYPE=t; break;;
-        * ) echo "Please answer y or n.";;
-    esac
-done
-
-# oc coreboot?
-while true; do
-    read -p "Do ya want an 1862 MHz memory OC (y/n)?" yn
-    case $yn in
-        [Yy]* ) MEMOC=y; break;;
-        [Nn]* ) MEMOC=n; break;;
-        * ) echo "Please answer y or n.";;
-    esac
-done
-
-# oc patch?
-while true; do
-    read -p "Do ya want a 2091 MHz CPU OC (y/n)?" yn
-    case $yn in
-        [Yy]* ) CPUOC=y; break;;
-        [Nn]* ) CPUOC=n; break;;
-        * ) echo "Please answer y or n.";;
-    esac
-done
-
-# joycon-swap?
-while true; do
-    read -p "Do ya want the screenshot button patch (y/n)?" yn
-    case $yn in
-        [Yy]* ) JCPATCH=y; break;;
-        [Nn]* ) JCPATCH=n; break;;
         * ) echo "Please answer y or n.";;
     esac
 done
@@ -256,8 +265,8 @@ then
 	git clone https://gitlab.com/switchroot/android/manifest.git -b lineage-17.1 local_manifests
 	repo sync --force-sync -j${JOBS}
 
-	# applying custom patch
-	apply_custom_patch
+	# repopick and apply patches
+	apply_patches
 
 # check if syncing
 elif [ -z $NOSYNC ];
@@ -282,52 +291,8 @@ then
 
     cd $BUILDBASE
 
-	# applying patches
+	# repopick and apply patches
 	apply_patches
-fi
-
-if [ ! -z $NOSYNC ];
-then
-	# update stuff (used for clean too but kinda unnecessary)
-	cd $BUILDBASE/android/lineage
-	source build/envsetup.sh
-
-	# repopicks
-	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t icosa-bt-lineage-17.1
-	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-shieldtech-q
-	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-beyonder-q
-	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 300860
-	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 287339
-	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 302339
-	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 302554
-	${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 284553
-
-	# bionic intrinsics patch
-	cd $BUILDBASE/android/lineage/bionic
-	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/bionic_intrinsics.patch
-
-	# beyonder fix patch
-	cd $BUILDBASE/android/lineage/device/nvidia/foster_tab
-	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/device_nvidia_foster_tab-beyonder.patch
-
-	# mouse patch
-	cd $BUILDBASE/android/lineage/frameworks/native
-	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/frameworks_native-mouse.patch
-
-	# desktop dock patch
-	cd $BUILDBASE/android/lineage/frameworks/base
-	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/frameworks_base-desktop-dock.patch
-
-	# gatekeeper hack patch
-	cd $BUILDBASE/android/lineage/system/core
-	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/system_core-gatekeeper-hack.patch
-
-	# atv resolution patch
-	cd $BUILDBASE/android/lineage/device/lineage/atv
-	patch -p1 < $BUILDBASE/android/lineage/.repo/local_manifests/patches/device_lineage_atv-res.patch
-
-	# applying custom patch
-	apply_custom_patch
 fi
 
 # reset back to lineage directory
