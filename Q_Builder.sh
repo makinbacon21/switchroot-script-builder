@@ -113,27 +113,35 @@ apply_patches() {
 		# Create our prompt
 		PS3="Do you want to apply the $key patch (y|n)? :"
 
-		# Check if patch is required then prompt to apply
-		if [[ $key == "required"  ]]; then
-			# Store patches into an array
-			PATCHES=($((jq -r '.patches[].'$key'[].patch | @sh' $PATCHJSON) | tr -d \'\"))
-
-			select answer in yes no; do
-				do_patching
-				break
-			done
-		fi
-
 		select answer in yes no; do
 			if [[ $answer == "yes" ]]; then
 				# Store patches into an array
 				PATCHES=($((jq -r '.patches[].'$key'[].patch | @sh' $PATCHJSON) | tr -d \'\")) # Store patches into an array
 				do_patching
 			else
-				echo -e "\nYou choosed not to apply $key patch !"
+				echo -e "\nYou chose not to apply $key patch !"
 			fi
 			break
 		done
+	done
+}
+
+# repopick commits based on json in repo
+repopick_commits() {
+
+	# Create a counter to keep track of picks
+	PICK_COUNT=0
+
+	# Iterate over patches
+	for key in $(jq -r '.repopicks[]' $PATCHJSON | jq -r 'keys[]'); do
+
+		# Increment counter
+		if [[ $(jq -r '.repopicks[PICK_COUNT].isNamed | @sh' $PATCHJSON) == "\"y\"" ]]; then
+			${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t ${key}
+		else
+			${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py ${key}
+		fi
+		PICK_COUNT=$((PICK_COUNT++))
 	done
 }
 
