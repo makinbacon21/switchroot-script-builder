@@ -95,6 +95,7 @@ apply_patches() {
 	done
 }
 
+# Code below suggested by someone5678
 read -p "Enter the location where android buildbase will be located ex: ~/Downloads
 (Just press enter if you wanna use default location): " BUILDBASE
 if [ -z $BUILDBASE ] ; then
