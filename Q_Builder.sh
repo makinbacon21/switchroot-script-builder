@@ -95,10 +95,12 @@ apply_patches() {
 	done
 }
 
-if [ -z "$BUILDBASE" ];
-then
-	read -p "Enter the parent folder where the android folder is in: " BUILDBASE
+read -p "Enter the location where android buildbase will be located ex: ~/Downloads
+(Just press enter if you wanna use default location): " BUILDBASE
+if [ -z $BUILDBASE ] ; then
+	BUILDBASE=~
 fi
+echo "Buildbase set to $BUILDBASE"
 
 cd $BUILDBASE
 
