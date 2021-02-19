@@ -139,8 +139,7 @@ then
 	cd $BUILDBASE/android/lineage
 	repo init -u https://github.com/LineageOS/android.git -b lineage-18.1
 	repo sync --force-sync -j${JOBS}
-	cd ./.repo
-	git clone https://gitlab.com/makinbacon17/manifest.git -b lineage-18.1 local_manifests
+	git -C .repo/local_manifests clone https://gitlab.com/makinbacon17/manifest.git -b lineage-18.1 local_manifests
 	repo sync --force-sync -j${JOBS}
 
 elif [ -z $NOSYNC ];
@@ -148,33 +147,28 @@ then
 	cd $BUILDBASE/android/lineage
 	repo forall -c 'git reset --hard'
 	repo forall -c 'git clean -fdd'
-	cd .repo/local_manifests
-	git pull
-	cd $BUILDBASE/android/lineage
+	git -C .repo/local_manifests pull
 	repo sync --force-sync -j${JOBS}
-
-	# update stuff (used for clean too but kinda unnecessary)
-	cd $BUILDBASE/android/lineage
-	source build/envsetup.sh
-
-	# repopicks
-	# BROKEN ${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-enhancements-r
-
-	# patches
-	
-	git -C device/nvidia/foster apply .repo/local_manifests/patches/device_nvidia_foster-HAX.patch
-	git -C device/nvidia/touch apply .repo/local_manifests/patches/device_nvidia_touch-raydium-HACK.patch
-	git -C device/nvidia/tegra-common apply .repo/local_manifests/patches/device_nvidia_tegra-common-HAX.patch
-	git -C bionic apply local_manifests/patches/bionic_intrinsics.patch
-	git -C build/soong apply .repo/local_manifests/patches/build_soong-build-HACK.patch
-
-
 fi
-# reset back to lineage directory
-cd $BUILDBASE/android/lineage
+
+source build/envsetup.sh
+
+# repopicks
+${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py -t nvidia-enhancements-r
+${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 304329
+
+# patches
+git -C device/nvidia/tegra-common am ../../../.repo/local_manifests/patches/device_nvidia_tegra-common-HAX.patch
+git -C device/nintendo/icosa_sr am ../../../.repo/local_manifests/patches/device_nintendo_icosa_sr-bt.patch
+git -C device/nintendo/icosa_sr am ../../../.repo/local_manifests/patches/device_nintendo_icosa_sr-wifi.patch
+git -C device/nintendo/icosa_sr am ../../../.repo/local_manifests/patches/device_nintendo_icosa_sr-joycon.patch
+git -C vendor/nvidia am ../../.repo/local_manifests/patches/vendor_nvidia-bt-fw.patch
+git -C frameworks/native am ../../.repo/local_manifests/patches/frameworks_native-joycon-filter.patch
+git -C bionic am ../.repo/local_manifests/patches/bionic_intrinsics.patch
+git -C build/soong am ../../.repo/local_manifests/patches/build_soong-build-HACK.patch
 
 # ccache
-if [ NOCCACHE == false ];
+if [ -z NOCCACHE ];
 then
 	export USE_CCACHE=1
 	export CCACHE_EXEC="/usr/bin/ccache"
