@@ -60,10 +60,9 @@ JOBS=$(($(nproc) + 1))
 
 # rom type?
 while true; do
-    read -p "Do ya want icosa (i) or foster_tab (m) or android tv (t)?" imt
-    case $imt in
+    read -p "Do ya want icosa_sr (i) or icosa_tv_sr (t)?" it
+    case $it in
         [Ii]* ) FOSTERTYPE=i; break;;
-        [Mm]* ) FOSTERTYPE=m; break;;
         [Tt]* ) FOSTERTYPE=t; break;;
         * ) echo "Please answer yes or no.";;
     esac
@@ -186,17 +185,12 @@ source build/envsetup.sh
 if [ $FOSTERTYPE == "i" ];
 then
 	TYPE="pico"
-	OUTPUTFILE="icosa"
-	lunch lineage_icosa-userdebug
-elif [ $FOSTERTYPE == "m" ];
-then
-	TYPE="pico"
-	OUTPUTFILE="foster_tab"
-	lunch lineage_foster_tab-userdebug
+	OUTPUTFILE="icosa_sr"
+	lunch lineage_icosa_sr-userdebug
 else
 	TYPE="tvmini"
-	OUTPUTFILE="foster"
-	lunch lineage_foster-userdebug	
+	OUTPUTFILE="icosa_tv_sr"
+	lunch lineage_icosa_tv_sr-userdebug	
 fi
 
 make -j${JOBS} bacon
