@@ -1,18 +1,18 @@
-# Switchroot Android Q Scripted Builder
+# Switchroot Android R Scripted Builder
 One script to rule them all
 
-Automates the steps of the Q-Tips Guide (https://gitlab.com/ZachyCatGames/q-tips-guide)
+Automates the steps of the Rene-Guide (https://gitlab.com/makinbacon17/rene-guide/)
 
-DISCLAIMER: Switchroot Android Q is still in development and may harm your device--a public image release will come soon, but this script builds the early-stage product for testing purposes. The current public release (Switchroot Android Oreo) is available using this guide: https://forum.xda-developers.com/t/rom-unofficial-8-1-switchroot-lineageos-15-1.3951389/
+DISCLAIMER: Switchroot Android R is in VERY EARLY development and may harm your device--a public image release will come soon, but this script builds the early-stage product for testing purposes. The current public release (Switchroot Android 10) is available using this guide: https://forum.xda-developers.com/t/rom-unofficial-switchroot-android-10.4229761/
 
 # Features
-Supports Android (`icosa`) (`foster_tab`) and Android TV (`foster`)
+Supports Android (`icosa_sr`) and Android TV (`icosa_tv_sr`)
 
 Clean build and updates
 
 OC coreboot (memory overclock)
 
-OC patch (CPU)
+COMING SOON: OC patch (CPU)
 
 Joycon patch (snapshot button takes screenshots)
 
@@ -40,7 +40,7 @@ Syntax: `./Q_Builder.sh [-v | --verbose] [-n | --nosync] [-c | --clean]`
 - `-e | --noccache`: Disables CCache for building (NOT RECOMMENDED--MOSTLY FOR TESTING PURPOSES)
 - `-h | --help`: Long-winded help message
 
-First `chmod +x Q_Builder.sh` to make it executable, thne run the script with `./Q_Builder.sh` and any arguments, and answer any prompts you get. Once stuff starts happening, there shouldn't be any more prompts unless you screwed something up
+First `chmod +x R_Builder.sh` to make it executable, thne run the script with `./R_Builder.sh` and any arguments, and answer any prompts you get. Once stuff starts happening, there shouldn't be any more prompts unless you screwed something up
 
 # Credits
 @Dajokeisonu for his direct contributions
