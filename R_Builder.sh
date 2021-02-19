@@ -158,10 +158,9 @@ ${BUILDBASE}/android/lineage/vendor/lineage/build/tools/repopick.py 304329
 
 # patches
 git -C device/nvidia/tegra-common am ../../../.repo/local_manifests/patches/device_nvidia_tegra-common-HAX.patch
-git -C device/nintendo/icosa_sr am ../../../.repo/local_manifests/patches/device_nintendo_icosa_sr-bt.patch
+git -C device/nintendo/icosa_sr am ../../../.repo/local_manifests/patches/device_nintendo_icosa_sr-bt-fw.patch
 git -C device/nintendo/icosa_sr am ../../../.repo/local_manifests/patches/device_nintendo_icosa_sr-wifi.patch
 git -C device/nintendo/icosa_sr am ../../../.repo/local_manifests/patches/device_nintendo_icosa_sr-joycon.patch
-git -C vendor/nvidia am ../../.repo/local_manifests/patches/vendor_nvidia-bt-fw.patch
 git -C frameworks/native am ../../.repo/local_manifests/patches/frameworks_native-joycon-filter.patch
 git -C bionic am ../.repo/local_manifests/patches/bionic_intrinsics.patch
 git -C build/soong am ../../.repo/local_manifests/patches/build_soong-build-HACK.patch
