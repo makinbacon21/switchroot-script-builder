@@ -1,4 +1,9 @@
-# Switchroot Android Q Scripted Builder
+# Switchroot Android Q Scripted Builder (Deprecated)
+
+Use https://github.com/PabloZaiden/switchroot-android-build
+I've been updating Pablo's Dockerized builder regularly, but this one is quite dead. If you don't want to use Docker, either use his build minus Docker or build manually using my new(ish) `snack` script, built to automate much of the manual local build process (https://github.com/makinbacon21/snack).
+
+
 One script to rule them all
 
 Automates the steps of the Q-Tips Guide (https://gitlab.com/ZachyCatGames/q-tips-guide)
